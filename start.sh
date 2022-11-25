@@ -1,0 +1,1 @@
+deno run --inspect --allow-all --unstable ./main.ts
