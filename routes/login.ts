@@ -16,7 +16,7 @@ export function login(router: Router) {
       if (data) {
         if (data.password == params.password) {
           const jwt = await create({ alg: "HS512", typ: "JWT" }, {
-            ...params,
+            account: params.account,
             date: Date.now(),
           }, key);
           const data2 = {
