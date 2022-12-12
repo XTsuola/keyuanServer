@@ -5,6 +5,7 @@ import {
   deleteData,
   findLast,
   queryAll,
+  queryCount,
   queryOne,
   update,
 } from "../mongoDB/index.ts";
@@ -33,10 +34,12 @@ export function team(router: Router) {
         } else {
           sql = { "group": params.group };
         }
+        const total = await queryCount(sql, "member")
         const data = await queryAll(sql, "member");
         ctx.response.body = {
           "code": 200,
           "rows": data,
+          "total": total,
           "msg": "查询成功",
         };
       }).post("/updateImg", verifyToken, async (ctx) => { // 修改头像
