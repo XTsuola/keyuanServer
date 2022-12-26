@@ -11,7 +11,7 @@ import {
 } from "../mongoDB/index.ts";
 import { ObjectId } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
 
-import { verifyToken } from "../verifyToken/index.ts"
+import { verifyToken } from "../verifyToken/index.ts";
 
 export function kaoshi(router: Router) {
   router
@@ -69,25 +69,25 @@ export function kaoshi(router: Router) {
     }).get("/deleteQuestion", verifyToken, async (ctx) => { // 删除试题
       const params = helpers.getQuery(ctx);
       const list = await queryAll({}, "paper");
-      const arr = []
-      for(let i=0;i<=list.length-1;i++){
-        const brr = []
-        for(let j=0;j<=list[i].stemArr.length-1;j++){
-          brr.push(list[i].stemArr[j].key)
+      const arr = [];
+      for (let i = 0; i <= list.length - 1; i++) {
+        const brr = [];
+        for (let j = 0; j <= list[i].stemArr.length - 1; j++) {
+          brr.push(list[i].stemArr[j].key);
         }
-        arr.push(brr)
+        arr.push(brr);
       }
       let count = 0;
-      for(let i=0;i<=arr.length-1;i++){
-        const index = arr[i].findIndex(item => item == parseInt(params.id))
-        if(index != -1) {
-          count++
+      for (let i = 0; i <= arr.length - 1; i++) {
+        const index = arr[i].findIndex((item) => item == parseInt(params.id));
+        if (index != -1) {
+          count++;
         }
-        if(count > 0) {
-          break
+        if (count > 0) {
+          break;
         }
       }
-      if(count > 0) {
+      if (count > 0) {
         ctx.response.body = {
           "code": 500,
           "msg": "该试题已被试卷绑定",
@@ -153,20 +153,20 @@ export function kaoshi(router: Router) {
     }).get("/deletePaper", verifyToken, async (ctx) => { // 删除试卷
       const params = helpers.getQuery(ctx);
       const list = await queryAll({}, "report");
-      const arr = []
-      for(let i=0;i<=list.length-1;i++){
-        arr.push(list[i].paperId)
+      const arr = [];
+      for (let i = 0; i <= list.length - 1; i++) {
+        arr.push(list[i].paperId);
       }
       let count = 0;
-      for(let i=0;i<=arr.length-1;i++){
-        if(arr[i] == parseInt(params.id)) {
-          count++
+      for (let i = 0; i <= arr.length - 1; i++) {
+        if (arr[i] == parseInt(params.id)) {
+          count++;
         }
-        if(count > 0) {
-          break
+        if (count > 0) {
+          break;
         }
       }
-      if(count > 0) {
+      if (count > 0) {
         ctx.response.body = {
           "code": 500,
           "msg": "该试卷已被用户绑定",
@@ -376,8 +376,8 @@ export function kaoshi(router: Router) {
             selectArr: res2?.selectArr,
             stem: res2?.stem,
             url: res2?.url,
-            type: res2?.type
-          })
+            type: res2?.type,
+          });
         }
       }
       const data = { ...res1, list: resData };
@@ -416,11 +416,36 @@ export function kaoshi(router: Router) {
         const res1 = await queryOne(sql1, "question");
         if (stemArr[i].anwser == res1?.anwser) {
           const sql2 = { id: params.paperId };
-          const res2 = await queryOne(sql2, "paper")
-          const index = res2?.stemArr.findIndex((item:any) => {
-            return item.key == stemArr[i].id
-          })
-          score += parseFloat(res2?.stemArr[index].score)
+          const res2 = await queryOne(sql2, "paper");
+          const index = res2?.stemArr.findIndex((item: any) => {
+            return item.key == stemArr[i].id;
+          });
+          score += parseFloat(res2?.stemArr[index].score);
+        } else {
+          if (stemArr[i].type == 5) {
+            const ans = parseFloat(stemArr[i].anwser);
+            const list = JSON.parse(res1?.anwser);
+            let xs = 0;
+            if (ans > list[0]) {
+              xs = 0;
+            } else if (ans > parseFloat(list[1]) && ans < list[0]) {
+              xs = 0.2;
+            } else if (ans > parseFloat(list[2]) && ans < parseFloat(list[1])) {
+              xs = 0.4;
+            } else if (ans > parseFloat(list[3]) && ans < parseFloat(list[2])) {
+              xs = 0.6;
+            } else if (ans > parseFloat(list[4]) && ans < parseFloat(list[3])) {
+              xs = 0.8;
+            } else if (ans < parseFloat(list[4])) {
+              xs = 1;
+            }
+            const sql2 = { id: params.paperId };
+            const res2 = await queryOne(sql2, "paper");
+            const index = res2?.stemArr.findIndex((item: any) => {
+              return item.key == stemArr[i].id;
+            });
+            score += parseFloat(res2?.stemArr[index].score) * xs;
+          }
         }
         anwserList.push(stemArr[i].anwser);
       }
