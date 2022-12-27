@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 import { Router } from "https://deno.land/x/oak@v10.2.1/router.ts";
 import { helpers } from "https://deno.land/x/oak@v10.2.1/mod.ts";
 import {
@@ -8,17 +9,17 @@ import {
   queryCount,
   update,
 } from "../mongoDB/index.ts";
-import { ObjectId } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
+import { Document, ObjectId } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
 
 import { verifyToken } from "../verifyToken/index.ts";
 
-export function xingta(router: Router) {
+export function xingta(router: Router): void {
   router
-    .get("/xingta/getHeroList", verifyToken, async (ctx) => { // 获取英雄列表
-      const params = helpers.getQuery(ctx);
+    .get("/xingta/getHeroList", verifyToken, async (ctx): Promise<void> => { // 获取英雄列表
+      const params: any = helpers.getQuery(ctx);
       const sql = {};
-      const total = await queryCount(sql, "xingtaHero");
-      const data = await queryAll(
+      const total: number = await queryCount(sql, "xingtaHero");
+      const data: Document[] = await queryAll(
         sql,
         "xingtaHero",
         parseInt(params.pageSize),
@@ -30,12 +31,12 @@ export function xingta(router: Router) {
         "total": total,
         "msg": "查询成功",
       };
-    }).post("/xingta/addHero", verifyToken, async (ctx) => { // 新增英雄信息
-      const params = await ctx.request.body({
+    }).post("/xingta/addHero", verifyToken, async (ctx): Promise<void> => { // 新增英雄信息
+      const params: any = await ctx.request.body({
         type: "json",
       }).value;
-      const lastInfo = await findLast("xingtaHero");
-      let id = 0;
+      const lastInfo: Document[] = await findLast("xingtaHero");
+      let id: number = 0;
       if (lastInfo.length) {
         id = lastInfo[0].id;
       }
@@ -50,14 +51,14 @@ export function xingta(router: Router) {
         introduce: params.introduce,
         remark: params.remark,
       };
-      const data = await add(sql, "xingtaHero");
+      const data: any = await add(sql, "xingtaHero");
       ctx.response.body = {
         "code": 200,
         "rows": data,
         "msg": "新增成功",
       };
-    }).post("/xingta/updateHero", verifyToken, async (ctx) => { // 修改英雄信息
-      const params = await ctx.request.body({
+    }).post("/xingta/updateHero", verifyToken, async (ctx): Promise<void> => { // 修改英雄信息
+      const params: any = await ctx.request.body({
         type: "json",
       }).value;
       const param1 = { _id: new ObjectId(params._id) };
@@ -78,10 +79,10 @@ export function xingta(router: Router) {
         "rows": data,
         "msg": "修改成功",
       };
-    }).get("/xingta/deleteHero", verifyToken, async (ctx) => { // 删除英雄信息
-      const params = helpers.getQuery(ctx);
+    }).get("/xingta/deleteHero", verifyToken, async (ctx): Promise<void> => { // 删除英雄信息
+      const params: any = helpers.getQuery(ctx);
       const sql = { _id: new ObjectId(params._id) };
-      const data = await deleteData(sql, "xingtaHero");
+      const data: number = await deleteData(sql, "xingtaHero");
       ctx.response.body = {
         "code": 200,
         "rows": data,

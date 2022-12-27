@@ -1,5 +1,6 @@
 // deno-lint-ignore-file
 import {
+  Document,
   MongoClient,
 } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
 
@@ -11,7 +12,7 @@ const db = client.database("keyuan");
 export async function queryCount(
   data: any,
   tableName: string
-) {
+): Promise<number> {
   const result = await db.collection(tableName).count(data)
   return result;
 }
@@ -22,12 +23,12 @@ export async function queryAll(
   tableName: string,
   pageSize?: number,
   pageNo?: number
-) {
-  if(pageSize && pageNo) {
-    const result = await db.collection(tableName).find(data).limit(pageSize).skip((pageNo-1)*pageSize).toArray();
+): Promise<Document[]> {
+  if (pageSize && pageNo) {
+    const result: Document[] = await db.collection(tableName).find(data).limit(pageSize).skip((pageNo - 1) * pageSize).toArray();
     return result;
   } else {
-    const result = await db.collection(tableName).find(data).toArray();
+    const result: Document[] = await db.collection(tableName).find(data).toArray();
     return result;
   }
 }
@@ -36,8 +37,8 @@ export async function queryAll(
 export async function queryOne(
   data: any,
   tableName: string,
-) {
-  const result = await db.collection(tableName).findOne(data);
+): Promise<Document | undefined> {
+  const result: Document | undefined = await db.collection(tableName).findOne(data);
   return result;
 }
 
@@ -45,8 +46,8 @@ export async function queryOne(
 export async function add(
   data: any,
   tableName: string,
-) {
-  const result = await db.collection(tableName).insertOne(data);
+): Promise<any> {
+  const result: any = await db.collection(tableName).insertOne(data);
   return result;
 }
 
@@ -59,15 +60,15 @@ export async function update(data1: any, data2: any, tableName: string) {
 }
 
 // 查询最后一条数据
-export async function findLast(tableName: string) {
-  const result = await db.collection(tableName).find({}).sort({ _id: -1 })
+export async function findLast(tableName: string): Promise<Document[]> {
+  const result: Document[] = await db.collection(tableName).find({}).sort({ _id: -1 })
     .limit(1).toArray();
   return result;
 }
 
 // 删除数据
-export async function deleteData(data: any, tableName: string) {
-  const result = await db.collection(tableName).deleteOne(data);
+export async function deleteData(data: any, tableName: string): Promise<number> {
+  const result: number = await db.collection(tableName).deleteOne(data);
   return result;
 }
 

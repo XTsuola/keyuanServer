@@ -7,7 +7,7 @@ app.use(oakCors());
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-app.use(async (context, next) => {
+app.use(async (context, next: () => Promise<unknown>): Promise<void> => {
     try {
         await context.send({
             root: `${Deno.cwd()}/public`

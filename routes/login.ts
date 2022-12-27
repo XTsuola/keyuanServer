@@ -4,18 +4,19 @@ import { add, update, findLast, queryOne } from "../mongoDB/index.ts";
 import { create } from "https://deno.land/x/djwt@v2.7/mod.ts";
 
 import { key } from "../verifyToken/key.ts";
+import { Document } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
 
 export function login(router: Router) {
   router
-    .post("/login", async (ctx) => { // 登录
-      const params = await ctx.request.body({
+    .post("/login", async (ctx): Promise<void> => { // 登录
+      const params: any = await ctx.request.body({
         type: "json",
       }).value;
       const sql = { "account": params.account };
-      const data = await queryOne(sql, "user");
+      const data: Document | undefined = await queryOne(sql, "user");
       if (data) {
         if (data.password == params.password) {
-          const jwt = await create({ alg: "HS512", typ: "JWT" }, {
+          const jwt: string = await create({ alg: "HS512", typ: "JWT" }, {
             account: params.account,
             date: Date.now(),
           }, key);
@@ -30,14 +31,14 @@ export function login(router: Router) {
             token: jwt,
           };
           const sql2 = { "account": params.account };
-          const data3 = await queryOne(sql2, "token");
+          const data3: Document | undefined = await queryOne(sql2, "token");
           if (data3) {
             const param1 = { account: data3.account };
             const param2 = { token: jwt };
             await update(param1, param2, "token");
           } else {
-            const lastInfo = await findLast("token");
-            let id = 0;
+            const lastInfo: Document[] = await findLast("token");
+            let id: number = 0;
             if (lastInfo.length) {
               id = lastInfo[0].id;
             }
