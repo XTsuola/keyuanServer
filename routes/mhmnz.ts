@@ -59,6 +59,7 @@ export function mhmnz(router: Router): void {
         camp: params.camp,
         exclusive: params.exclusive,
         superSkill: params.superSkill,
+        talent: params.talent,
         introduce: params.introduce,
         remark: params.remark,
       };
@@ -81,6 +82,7 @@ export function mhmnz(router: Router): void {
         camp: params.camp,
         exclusive: params.exclusive,
         superSkill: params.superSkill,
+        talent: params.talent,
         introduce: params.introduce,
         remark: params.remark,
       };
