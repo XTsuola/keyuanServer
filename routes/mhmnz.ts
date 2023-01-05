@@ -2,16 +2,16 @@
 import { Router } from "https://deno.land/x/oak@v10.2.1/router.ts";
 import { helpers } from "https://deno.land/x/oak@v10.2.1/mod.ts";
 import {
-  queryCount,
   add,
   deleteData,
   findLast,
   queryAll,
+  queryCount,
   update,
 } from "../mongoDB/index.ts";
 import { Document, ObjectId } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
 
-import { verifyToken } from "../verifyToken/index.ts"
+import { verifyToken } from "../verifyToken/index.ts";
 
 export function mhmnz(router: Router): void {
   router
@@ -19,23 +19,36 @@ export function mhmnz(router: Router): void {
       const params: any = helpers.getQuery(ctx);
       let sql: any = {};
       if (params.star != undefined && parseInt(params.star) != 0) {
-        sql = { ...sql, "star": parseInt(params.star) }
+        sql = { ...sql, "star": parseInt(params.star) };
       }
       if (params.gender != undefined && parseInt(params.gender) != 0) {
         sql = { ...sql, "gender": parseInt(params.gender) };
       }
       if (params.camp != undefined && parseInt(params.camp) != 0) {
-        const res: Document[] = await queryAll({}, "mhmnzHero")
-        const idArr: any[] = []
+        const res: Document[] = await queryAll({}, "mhmnzHero");
+        const idArr: any[] = [];
         for (let i: number = 0; i < res.length; i++) {
-          if (res[i].camp.findIndex((item: number) => item == parseInt(params.camp)) != -1) {
-            idArr.push({ id: res[i].id })
+          if (
+            res[i].camp.findIndex((item: number) =>
+              item == parseInt(params.camp)
+            ) != -1
+          ) {
+            idArr.push({ id: res[i].id });
           }
         }
-        sql = { ...sql, $or: idArr }
+        if (idArr.length > 0) {
+          sql = { ...sql, $or: idArr };
+        } else {
+          sql = { ...sql, id: 0 };
+        }
       }
-      const total: number = await queryCount(sql, "mhmnzHero")
-      const data: Document = await queryAll(sql, "mhmnzHero", parseInt(params.pageSize), parseInt(params.pageNo));
+      const total: number = await queryCount(sql, "mhmnzHero");
+      const data: Document = await queryAll(
+        sql,
+        "mhmnzHero",
+        parseInt(params.pageSize),
+        parseInt(params.pageNo),
+      );
       ctx.response.body = {
         "code": 200,
         "rows": data,
@@ -109,8 +122,13 @@ export function mhmnz(router: Router): void {
       } else {
         sql = { "type": parseInt(params.type) };
       }
-      const total: number = await queryCount(sql, "mhmnzArms")
-      const data: Document[] = await queryAll(sql, "mhmnzArms", parseInt(params.pageSize), parseInt(params.pageNo));
+      const total: number = await queryCount(sql, "mhmnzArms");
+      const data: Document[] = await queryAll(
+        sql,
+        "mhmnzArms",
+        parseInt(params.pageSize),
+        parseInt(params.pageNo),
+      );
       ctx.response.body = {
         "code": 200,
         "rows": data,
@@ -178,16 +196,23 @@ export function mhmnz(router: Router): void {
       const params: any = helpers.getQuery(ctx);
       let sql: any = {};
       if (params.star != undefined && parseInt(params.star) != 0) {
-        sql = { ...sql, "star": parseInt(params.star) }
+        sql = { ...sql, "star": parseInt(params.star) };
       }
       if (params.weaponType != undefined && parseInt(params.weaponType) != 0) {
         sql = { ...sql, "weaponType": parseInt(params.weaponType) };
       }
-      if (params.isExclusive != undefined && parseInt(params.isExclusive) != 0) {
+      if (
+        params.isExclusive != undefined && parseInt(params.isExclusive) != 0
+      ) {
         sql = { ...sql, "isExclusive": parseInt(params.isExclusive) };
       }
-      const total: number = await queryCount(sql, "mhmnzWeapon")
-      const data: Document[] = await queryAll(sql, "mhmnzWeapon", parseInt(params.pageSize), parseInt(params.pageNo));
+      const total: number = await queryCount(sql, "mhmnzWeapon");
+      const data: Document[] = await queryAll(
+        sql,
+        "mhmnzWeapon",
+        parseInt(params.pageSize),
+        parseInt(params.pageNo),
+      );
       ctx.response.body = {
         "code": 200,
         "rows": data,
@@ -249,5 +274,5 @@ export function mhmnz(router: Router): void {
         "rows": data,
         "msg": "删除成功",
       };
-    })
+    });
 }
