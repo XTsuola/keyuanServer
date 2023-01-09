@@ -58,9 +58,9 @@ export function mhmnz(router: Router): void {
         camp: params.camp,
         exclusive: params.exclusive,
         superSkill: params.superSkill,
+        castGrainSkill: params.castGrainSkill,
         talent: params.talent,
         introduce: params.introduce,
-        remark: params.remark,
       };
       const data: any = await add(sql, "mhmnzHero");
       ctx.response.body = {
@@ -81,9 +81,9 @@ export function mhmnz(router: Router): void {
         camp: params.camp,
         exclusive: params.exclusive,
         superSkill: params.superSkill,
+        castGrainSkill: params.castGrainSkill,
         talent: params.talent,
         introduce: params.introduce,
-        remark: params.remark,
       };
       const data = await update(param1, param2, "mhmnzHero");
       ctx.response.body = {
