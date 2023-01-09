@@ -19,29 +19,15 @@ export function mhmnz(router: Router): void {
       const params: any = helpers.getQuery(ctx);
       let sql: any = {};
       if (params.star != undefined && parseInt(params.star) != 0) {
-        sql = { ...sql, "star": parseInt(params.star) };
+        sql = { ...sql, star: parseInt(params.star) };
       }
       if (params.gender != undefined && parseInt(params.gender) != 0) {
-        sql = { ...sql, "gender": parseInt(params.gender) };
+        sql = { ...sql, gender: parseInt(params.gender) };
       }
       if (params.camp != undefined && parseInt(params.camp) != 0) {
-        const res: Document[] = await queryAll({}, "mhmnzHero");
-        const idArr: any[] = [];
-        for (let i: number = 0; i < res.length; i++) {
-          if (
-            res[i].camp.findIndex((item: number) =>
-              item == parseInt(params.camp)
-            ) != -1
-          ) {
-            idArr.push({ id: res[i].id });
-          }
-        }
-        if (idArr.length > 0) {
-          sql = { ...sql, $or: idArr };
-        } else {
-          sql = { ...sql, id: 0 };
-        }
+        sql = { ...sql, camp: parseInt(params.camp) };
       }
+      sql = { ...sql, superSkill: { "$regex": params.superSkill } };
       const total: number = await queryCount(sql, "mhmnzHero");
       const data: Document = await queryAll(
         sql,

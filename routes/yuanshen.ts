@@ -19,19 +19,19 @@ export function yuanshen(router: Router): void {
       const params: any = helpers.getQuery(ctx);
       let sql: any = {};
       if (params.gender != undefined && parseInt(params.gender) != 0) {
-        sql = { ...sql, "gender": parseInt(params.gender) };
+        sql = { ...sql, gender: parseInt(params.gender) };
       }
       if (params.country != undefined && parseInt(params.country) != 0) {
-        sql = { ...sql, "country": parseInt(params.country) }
+        sql = { ...sql, country: parseInt(params.country) }
       }
       if (params.arms != undefined && parseInt(params.arms) != 0) {
-        sql = { ...sql, "arms": parseInt(params.arms) }
+        sql = { ...sql, arms: parseInt(params.arms) }
       }
       if (params.shuxing != undefined && parseInt(params.shuxing) != 0) {
-        sql = { ...sql, "shuxing": parseInt(params.shuxing) }
+        sql = { ...sql, shuxing: parseInt(params.shuxing) }
       }
       if (params.star != undefined && parseInt(params.star) != 0) {
-        sql = { ...sql, "star": parseInt(params.star) }
+        sql = { ...sql, star: parseInt(params.star) }
       }
       const total: number = await queryCount(sql, "yuanshenHero")
       const data: Document[] = await queryAll(sql, "yuanshenHero", parseInt(params.pageSize), parseInt(params.pageNo));

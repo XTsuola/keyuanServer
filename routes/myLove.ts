@@ -2,16 +2,16 @@
 import { Router } from "https://deno.land/x/oak@v10.2.1/router.ts";
 import { helpers } from "https://deno.land/x/oak@v10.2.1/mod.ts";
 import {
-  queryCount,
   add,
   deleteData,
   findLast,
   queryAll,
+  queryCount,
   update,
 } from "../mongoDB/index.ts";
 import { Document, ObjectId } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
 
-import { verifyToken } from "../verifyToken/index.ts"
+import { verifyToken } from "../verifyToken/index.ts";
 
 export function myLove(router: Router): void {
   router
@@ -19,17 +19,22 @@ export function myLove(router: Router): void {
       const params: any = helpers.getQuery(ctx);
       let sql: any = {};
       if (params.cookType != undefined && parseInt(params.cookType) != 0) {
-        sql = { ...sql, "cookType": parseInt(params.cookType) }
+        sql = { ...sql, cookType: parseInt(params.cookType) };
       }
       if (params.hunsu != undefined && parseInt(params.hunsu) != 0) {
-        sql = { ...sql, "hunsu": parseInt(params.hunsu) }
+        sql = { ...sql, hunsu: parseInt(params.hunsu) };
       }
       if (params.mastery != undefined && parseInt(params.mastery) != 0) {
-        sql = { ...sql, "mastery": parseInt(params.mastery) }
+        sql = { ...sql, mastery: parseInt(params.mastery) };
       }
-      sql = { ...sql, name: { "$regex": params.name } }
-      const total: number = await queryCount(sql, "cook")
-      const data: Document[] = await queryAll(sql, "cook", parseInt(params.pageSize), parseInt(params.pageNo));
+      sql = { ...sql, name: { "$regex": params.name } };
+      const total: number = await queryCount(sql, "cook");
+      const data: Document[] = await queryAll(
+        sql,
+        "cook",
+        parseInt(params.pageSize),
+        parseInt(params.pageNo),
+      );
       ctx.response.body = {
         "code": 200,
         "rows": data,
@@ -93,5 +98,5 @@ export function myLove(router: Router): void {
         "rows": data,
         "msg": "删除成功",
       };
-    })
+    });
 }

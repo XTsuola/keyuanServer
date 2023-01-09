@@ -19,25 +19,10 @@ export function wzry(router: Router): void {
       const params: any = helpers.getQuery(ctx);
       let sql = {};
       if (params.gender != undefined && parseInt(params.gender) != 0) {
-        sql = { ...sql, "gender": parseInt(params.gender) };
+        sql = { ...sql, gender: parseInt(params.gender) };
       }
       if (params.position != undefined && parseInt(params.position) != 0) {
-        const res: Document[] = await queryAll({}, "wzryHero");
-        const idArr: any[] = [];
-        for (let i: number = 0; i < res.length; i++) {
-          if (
-            res[i].position.findIndex((item: number) =>
-              item == parseInt(params.position)
-            ) != -1
-          ) {
-            idArr.push({ id: res[i].id });
-          }
-        }
-        if (idArr.length > 0) {
-          sql = { ...sql, $or: idArr };
-        } else {
-          sql = { ...sql, id: 0 };
-        }
+        sql = { ...sql, position: parseInt(params.position) };
       }
       sql = {
         ...sql,
