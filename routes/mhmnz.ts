@@ -17,7 +17,7 @@ export function mhmnz(router: Router): void {
   router
     .get("/mhmnz/getHeroList", verifyToken, async (ctx): Promise<void> => { // 获取英雄列表
       const params: any = helpers.getQuery(ctx);
-      let sql: any = {};
+      let sql: any = { name: { "$regex": params.name } };
       if (params.star != undefined && parseInt(params.star) != 0) {
         sql = { ...sql, star: parseInt(params.star) };
       }
@@ -102,11 +102,9 @@ export function mhmnz(router: Router): void {
       };
     }).get("/mhmnz/getArmsList", verifyToken, async (ctx): Promise<void> => { // 获取兵种列表
       const params: any = helpers.getQuery(ctx);
-      let sql: any = {};
-      if (params.type === undefined || parseInt(params.type) == 0) {
-        sql = {};
-      } else {
-        sql = { "type": parseInt(params.type) };
+      let sql: any = { name: { "$regex": params.name } };
+      if (params.type != undefined && parseInt(params.type) != 0) {
+        sql = { ...sql, "type": parseInt(params.type) };
       }
       const total: number = await queryCount(sql, "mhmnzArms");
       const data: Document[] = await queryAll(
@@ -180,7 +178,7 @@ export function mhmnz(router: Router): void {
       };
     }).get("/mhmnz/getWeaponList", verifyToken, async (ctx): Promise<void> => { // 获取武器列表
       const params: any = helpers.getQuery(ctx);
-      let sql: any = {};
+      let sql: any = { name: { "$regex": params.name } };
       if (params.star != undefined && parseInt(params.star) != 0) {
         sql = { ...sql, "star": parseInt(params.star) };
       }
