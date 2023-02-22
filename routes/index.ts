@@ -7,6 +7,7 @@ import { mhmnz } from "./mhmnz.ts"
 import { yuanshen } from "./yuanshen.ts"
 import { xingta } from "./xingta.ts"
 import { myLove } from "./myLove.ts"
+import { mota } from "./mota.ts"
 
 const router = new Router();
 
@@ -18,5 +19,6 @@ mhmnz(router)
 yuanshen(router)
 xingta(router)
 myLove(router)
+mota(router)
 
 export default router
