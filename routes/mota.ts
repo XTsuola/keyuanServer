@@ -19,14 +19,45 @@ export function mota(router: Router) {
       }).value;
       const param1 = { id: 1 };
       const param2 = {
-        id: params.id,
-        ...params
-      };
+        jys: params.jys,
+        yys: params.yys,
+        sm: params.sm,
+        list: params.list
+      }
       const data = await update(param1, param2, "mota");
       ctx.response.body = {
         "code": 200,
         "rows": data,
         "msg": "保存成功",
       };
+    }).post("/mota/login", async (ctx): Promise<void> => { // 登录
+      const params: any = await ctx.request.body({
+        type: "json",
+      }).value;
+      const sql = { username: params.username };
+      const data: Document | undefined = await queryOne(sql, "motaUser");
+      if (data) {
+        if (data.password == params.password) {
+          const data2 = {
+            _id: data._id,
+            id: data.id
+          };
+          ctx.response.body = {
+            "code": 200,
+            "data": data2,
+            "msg": "登录成功",
+          };
+        } else {
+          ctx.response.body = {
+            "code": 0,
+            "msg": "密码错误",
+          };
+        }
+      } else {
+        ctx.response.body = {
+          "code": 0,
+          "msg": "账号不存在",
+        };
+      }
     });
 }
