@@ -22,6 +22,7 @@ export function mota(router: Router) {
         jys: params.jys,
         yys: params.yys,
         sm: params.sm,
+        role: params.role,
         list: params.list
       }
       const data = await update(param1, param2, "mota");
@@ -40,7 +41,8 @@ export function mota(router: Router) {
         if (data.password == params.password) {
           const data2 = {
             _id: data._id,
-            id: data.id
+            id: data.id,
+            drama: data.drama
           };
           ctx.response.body = {
             "code": 200,
@@ -59,5 +61,30 @@ export function mota(router: Router) {
           "msg": "账号不存在",
         };
       }
-    });
+    }).post("/mota/updateLevel", async (ctx): Promise<void> => { // 更新楼层
+      const params: any = await ctx.request.body({
+        type: "json",
+      }).value;
+      let params2 = {}
+      let sql: any = { id: 1 };
+      const res: Document | undefined = await queryOne(sql, "mota");
+      if (res) {
+        if (params.id == 81) {
+          res.role[0].level = params.level
+        } else if (params.id == 82) {
+          res.role[1].level = params.level
+        } else if (params.id == 83) {
+          res.role[2].level = params.level
+        } else if (params.id == 84) {
+          res.role[3].level = params.level
+        }
+        params2 = { level: res.level };
+      }
+      const data = await update({ id: 1 }, params2, "mota");
+      ctx.response.body = {
+        "code": 200,
+        "rows": data,
+        "msg": "保存成功",
+      };
+    })
 }

@@ -5,6 +5,7 @@ import { kaoshi } from "./kaoshi.ts"
 import { wzry } from "./wzry.ts"
 import { mhmnz } from "./mhmnz.ts"
 import { yuanshen } from "./yuanshen.ts"
+import { yys } from "./yys.ts"
 import { xingta } from "./xingta.ts"
 import { myLove } from "./myLove.ts"
 import { mota } from "./mota.ts"
@@ -17,6 +18,7 @@ kaoshi(router)
 wzry(router)
 mhmnz(router)
 yuanshen(router)
+yys(router)
 xingta(router)
 myLove(router)
 mota(router)
