@@ -10,6 +10,7 @@ import {
   update,
 } from "../mongoDB/index.ts";
 import { Document, ObjectId } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
+import { decode } from "https://deno.land/std@0.138.0/encoding/base64.ts";
 
 import { verifyToken } from "../verifyToken/index.ts";
 
@@ -55,6 +56,26 @@ export function yuanshen(router: Router): void {
       if (lastInfo.length) {
         id = lastInfo[0].id;
       }
+      let img = "";
+      const baseName: string = params.name + ".jpg";
+      try {
+        await Deno.remove(`${Deno.cwd()}/public/yuanshen/hero/${baseName}`);
+      } catch (_) {}
+      if (params.img) {
+        if (params.img != baseName) {
+          const imgName: string = params.name + ".jpg";
+          const path = `${Deno.cwd()}/public/yuanshen/hero/${imgName}`;
+          const base64: any = params.img.replace(
+            /^data:image\/\w+;base64,/,
+            "",
+          );
+          const dataBuffer: Uint8Array = decode(base64);
+          await Deno.writeFile(path, dataBuffer);
+          img = baseName;
+        } else {
+          img = baseName;
+        }
+      }
       const sql = {
         id: id + 1,
         name: params.name,
@@ -70,6 +91,7 @@ export function yuanshen(router: Router): void {
         star: params.star,
         introduce: params.introduce,
         remark: params.remark,
+        img: img,
       };
       const data: any = await add(sql, "yuanshenHero");
       ctx.response.body = {
@@ -81,6 +103,26 @@ export function yuanshen(router: Router): void {
       const params: any = await ctx.request.body({
         type: "json",
       }).value;
+      let img = "";
+      const baseName: string = params.name + ".jpg";
+      if (params.img) {
+        if (params.img != baseName) {
+          try {
+            await Deno.remove(`${Deno.cwd()}/public/yuanshen/hero/${baseName}`);
+          } catch (_) {}
+          const imgName: string = params.name + ".jpg";
+          const path = `${Deno.cwd()}/public/yuanshen/hero/${imgName}`;
+          const base64: any = params.img.replace(
+            /^data:image\/\w+;base64,/,
+            "",
+          );
+          const dataBuffer: Uint8Array = decode(base64);
+          await Deno.writeFile(path, dataBuffer);
+          img = baseName;
+        } else {
+          img = baseName;
+        }
+      }
       const param1 = { _id: new ObjectId(params._id) };
       const param2 = {
         id: params.id,
@@ -97,6 +139,7 @@ export function yuanshen(router: Router): void {
         star: params.star,
         introduce: params.introduce,
         remark: params.remark,
+        img: img,
       };
       const data = await update(param1, param2, "yuanshenHero");
       ctx.response.body = {
@@ -106,6 +149,11 @@ export function yuanshen(router: Router): void {
       };
     }).get("/yuanshen/deleteHero", verifyToken, async (ctx): Promise<void> => { // 删除英雄信息
       const params: any = helpers.getQuery(ctx);
+      if (params.img) {
+        try {
+          await Deno.remove(`${Deno.cwd()}/public/yuanshen/hero/${params.img}`);
+        } catch (_) {}
+      }
       const sql = { _id: new ObjectId(params._id) };
       const data: number = await deleteData(sql, "yuanshenHero");
       ctx.response.body = {
