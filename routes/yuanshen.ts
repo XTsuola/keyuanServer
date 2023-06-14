@@ -18,7 +18,12 @@ export function yuanshen(router: Router): void {
   router
     .get("/yuanshen/getHeroList", verifyToken, async (ctx): Promise<void> => { // 获取英雄列表
       const params: any = helpers.getQuery(ctx);
-      let sql: any = { name: { "$regex": params.name } };
+      let sql: any = {
+        name: { "$regex": params.name },
+        remark: params.starSign
+          ? { "$regex": params.starSign }
+          : { "$regex": "" },
+      };
       if (params.gender != undefined && parseInt(params.gender) != 0) {
         sql = { ...sql, gender: parseInt(params.gender) };
       }
