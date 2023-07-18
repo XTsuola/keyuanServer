@@ -6,7 +6,6 @@ import { wzry } from "./wzry.ts"
 import { mhmnz } from "./mhmnz.ts"
 import { yuanshen } from "./yuanshen.ts"
 import { yys } from "./yys.ts"
-import { yjz } from "./yjz.ts"
 import { xingta } from "./xingta.ts"
 import { myLove } from "./myLove.ts"
 import { mota } from "./mota.ts"
@@ -20,7 +19,6 @@ wzry(router)
 mhmnz(router)
 yuanshen(router)
 yys(router)
-yjz(router)
 xingta(router)
 myLove(router)
 mota(router)

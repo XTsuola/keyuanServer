@@ -337,5 +337,103 @@ export function yuanshen(router: Router): void {
         "rows": data,
         "msg": "删除成功",
       };
-    });
+    }).get(
+      "/yuanshen/getAbyss12List",
+      verifyToken,
+      async (ctx): Promise<void> => { // 获取深渊12层怪物列表
+        const params: any = helpers.getQuery(ctx);
+        let sql = {};
+        if (params.name) {
+          console.log(params.name);
+          sql = {
+            $or: [
+              { firstUpper: { "$regex": params.name } },
+              { firstLower: { "$regex": params.name } },
+              { secondUpper: { "$regex": params.name } },
+              { secondLower: { "$regex": params.name } },
+              { thirdUpper: { "$regex": params.name } },
+              { thirdLower: { "$regex": params.name } },
+            ],
+          };
+        }
+        const total: number = await queryCount(sql, "yuanshenAbyss12");
+        const data: Document[] = await queryAll(
+          sql,
+          "yuanshenAbyss12",
+          parseInt(params.pageSize),
+          parseInt(params.pageNo),
+        );
+        ctx.response.body = {
+          "code": 200,
+          "rows": data,
+          "total": total,
+          "msg": "查询成功",
+        };
+      },
+    ).post("/yuanshen/addAbyss12", verifyToken, async (ctx): Promise<void> => { // 新增深渊12层怪物信息
+      const params: any = await ctx.request.body({
+        type: "json",
+      }).value;
+      const lastInfo: Document[] = await findLast("yuanshenAbyss12");
+      let id: number = 0;
+      if (lastInfo.length) {
+        id = lastInfo[0].id;
+      }
+      const sql = {
+        id: id + 1,
+        version: params.version,
+        firstUpper: params.firstUpper,
+        firstLower: params.firstLower,
+        secondUpper: params.secondUpper,
+        secondLower: params.secondLower,
+        thirdUpper: params.thirdUpper,
+        thirdLower: params.thirdLower,
+        remark: params.remark,
+      };
+      const data = await add(sql, "yuanshenAbyss12");
+      ctx.response.body = {
+        "code": 200,
+        "rows": data,
+        "msg": "新增成功",
+      };
+    }).post(
+      "/yuanshen/updateAbyss12",
+      verifyToken,
+      async (ctx): Promise<void> => { // 修改深渊12层怪物信息
+        const params: any = await ctx.request.body({
+          type: "json",
+        }).value;
+        const param1 = { _id: new ObjectId(params._id) };
+        const param2 = {
+          id: params.id,
+          version: params.version,
+          firstUpper: params.firstUpper,
+          firstLower: params.firstLower,
+          secondUpper: params.secondUpper,
+          secondLower: params.secondLower,
+          thirdUpper: params.thirdUpper,
+          thirdLower: params.thirdLower,
+          remark: params.remark,
+        };
+        const data = await update(param1, param2, "yuanshenAbyss12");
+        ctx.response.body = {
+          "code": 200,
+          "rows": data,
+          "msg": "修改成功",
+        };
+      },
+    ).get(
+      "/yuanshen/deleteAbyss12",
+      verifyToken,
+      async (ctx): Promise<void> => { // 删除深渊12层怪物信息
+        const params: any = helpers.getQuery(ctx);
+        const sql = { _id: new ObjectId(params._id) };
+        const data: number = await deleteData(sql, "yuanshenAbyss12");
+        ctx.response.body = {
+          "code": 200,
+          "rows": data,
+          "msg": "删除成功",
+        };
+      },
+    );
 }
