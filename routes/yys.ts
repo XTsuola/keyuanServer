@@ -10,7 +10,6 @@ import {
   update,
 } from "../mongoDB/index.ts";
 import { Document, ObjectId } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
-
 import { verifyToken } from "../verifyToken/index.ts";
 
 export function yys(router: Router): void {
@@ -59,7 +58,7 @@ export function yys(router: Router): void {
         bs: params.bs,
         mz: params.mz,
         dk: params.dk,
-        remark: params.remark
+        remark: params.remark,
       };
       const data: any = await add(sql, "yinyangshiHero");
       ctx.response.body = {
@@ -85,7 +84,7 @@ export function yys(router: Router): void {
         bs: params.bs,
         mz: params.mz,
         dk: params.dk,
-        remark: params.remark
+        remark: params.remark,
       };
       const data = await update(param1, param2, "yinyangshiHero");
       ctx.response.body = {

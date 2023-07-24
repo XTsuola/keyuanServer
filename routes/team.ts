@@ -11,11 +11,8 @@ import {
   update,
 } from "../mongoDB/index.ts";
 import { Document, ObjectId } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
-import {
-  decode
-} from "https://deno.land/std@0.138.0/encoding/base64.ts";
-
-import { verifyToken } from "../verifyToken/index.ts"
+import { decode } from "https://deno.land/std@0.138.0/encoding/base64.ts";
+import { verifyToken } from "../verifyToken/index.ts";
 
 export function team(router: Router): void {
   router
@@ -35,7 +32,7 @@ export function team(router: Router): void {
       } else {
         sql = { "group": params.group };
       }
-      const total: number = await queryCount(sql, "member")
+      const total: number = await queryCount(sql, "member");
       const data: Document[] = await queryAll(sql, "member");
       ctx.response.body = {
         "code": 200,
@@ -70,7 +67,7 @@ export function team(router: Router): void {
           "msg": "修改成功",
         };
       } catch (error) {
-        throw (error)
+        throw (error);
       }
     }).get("/getUserInfo", verifyToken, async (ctx): Promise<void> => { // 用户信息查询
       const params: any = helpers.getQuery(ctx);
@@ -217,5 +214,5 @@ export function team(router: Router): void {
         "rows": data,
         "msg": "新增成功",
       };
-    })
+    });
 }

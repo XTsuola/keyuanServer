@@ -10,7 +10,6 @@ import {
   update,
 } from "../mongoDB/index.ts";
 import { Document, ObjectId } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
-
 import { verifyToken } from "../verifyToken/index.ts";
 
 export function kaoshi(router: Router): void {
@@ -79,7 +78,9 @@ export function kaoshi(router: Router): void {
       }
       let count: number = 0;
       for (let i: number = 0; i <= arr.length - 1; i++) {
-        const index: any = arr[i].findIndex((item: any): boolean => item == parseInt(params.id));
+        const index: any = arr[i].findIndex((item: any): boolean =>
+          item == parseInt(params.id)
+        );
         if (index != -1) {
           count++;
         }
@@ -287,18 +288,22 @@ export function kaoshi(router: Router): void {
         "rows": dataList,
         "msg": "查询成功",
       };
-    }).post("/getOthersPaperSelectList", verifyToken, async (ctx): Promise<void> => { // 查询剩余试卷下拉框
-      const params: any = await ctx.request.body({
-        type: "json",
-      }).value;
-      const sql = { "id": { $nin: params } };
-      const data: Document[] = await queryAll(sql, "paper");
-      ctx.response.body = {
-        "code": 200,
-        "rows": data,
-        "msg": "查询成功",
-      };
-    }).post("/addReport", verifyToken, async (ctx): Promise<void> => { // 新增答卷
+    }).post(
+      "/getOthersPaperSelectList",
+      verifyToken,
+      async (ctx): Promise<void> => { // 查询剩余试卷下拉框
+        const params: any = await ctx.request.body({
+          type: "json",
+        }).value;
+        const sql = { "id": { $nin: params } };
+        const data: Document[] = await queryAll(sql, "paper");
+        ctx.response.body = {
+          "code": 200,
+          "rows": data,
+          "msg": "查询成功",
+        };
+      },
+    ).post("/addReport", verifyToken, async (ctx): Promise<void> => { // 新增答卷
       const params: any = await ctx.request.body({
         type: "json",
       }).value;

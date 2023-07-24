@@ -11,9 +11,9 @@ const db = client.database("keyuan");
 // 查询总数
 export async function queryCount(
   data: any,
-  tableName: string
+  tableName: string,
 ): Promise<number> {
-  const result = await db.collection(tableName).count(data)
+  const result = await db.collection(tableName).count(data);
   return result;
 }
 
@@ -22,13 +22,16 @@ export async function queryAll(
   data: any,
   tableName: string,
   pageSize?: number,
-  pageNo?: number
+  pageNo?: number,
 ): Promise<Document[]> {
   if (pageSize && pageNo) {
-    const result: Document[] = await db.collection(tableName).find(data).limit(pageSize).skip((pageNo - 1) * pageSize).toArray();
+    const result: Document[] = await db.collection(tableName).find(data).limit(
+      pageSize,
+    ).skip((pageNo - 1) * pageSize).toArray();
     return result;
   } else {
-    const result: Document[] = await db.collection(tableName).find(data).toArray();
+    const result: Document[] = await db.collection(tableName).find(data)
+      .toArray();
     return result;
   }
 }
@@ -38,7 +41,9 @@ export async function queryOne(
   data: any,
   tableName: string,
 ): Promise<Document | undefined> {
-  const result: Document | undefined = await db.collection(tableName).findOne(data);
+  const result: Document | undefined = await db.collection(tableName).findOne(
+    data,
+  );
   return result;
 }
 
@@ -61,13 +66,18 @@ export async function update(data1: any, data2: any, tableName: string) {
 
 // 查询最后一条数据
 export async function findLast(tableName: string): Promise<Document[]> {
-  const result: Document[] = await db.collection(tableName).find({}).sort({ _id: -1 })
+  const result: Document[] = await db.collection(tableName).find({}).sort({
+    _id: -1,
+  })
     .limit(1).toArray();
   return result;
 }
 
 // 删除数据
-export async function deleteData(data: any, tableName: string): Promise<number> {
+export async function deleteData(
+  data: any,
+  tableName: string,
+): Promise<number> {
   const result: number = await db.collection(tableName).deleteOne(data);
   return result;
 }

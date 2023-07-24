@@ -23,8 +23,8 @@ export function mota(router: Router) {
         yys: params.yys,
         sm: params.sm,
         role: params.role,
-        list: params.list
-      }
+        list: params.list,
+      };
       const data = await update(param1, param2, "mota");
       ctx.response.body = {
         "code": 200,
@@ -42,7 +42,7 @@ export function mota(router: Router) {
           const data2 = {
             _id: data._id,
             id: data.id,
-            drama: data.drama
+            drama: data.drama,
           };
           ctx.response.body = {
             "code": 200,
@@ -65,18 +65,18 @@ export function mota(router: Router) {
       const params: any = await ctx.request.body({
         type: "json",
       }).value;
-      let params2 = {}
+      let params2 = {};
       let sql: any = { id: 1 };
       const res: Document | undefined = await queryOne(sql, "mota");
       if (res) {
         if (params.id == 81) {
-          res.role[0].level = params.level
+          res.role[0].level = params.level;
         } else if (params.id == 82) {
-          res.role[1].level = params.level
+          res.role[1].level = params.level;
         } else if (params.id == 83) {
-          res.role[2].level = params.level
+          res.role[2].level = params.level;
         } else if (params.id == 84) {
-          res.role[3].level = params.level
+          res.role[3].level = params.level;
         }
         params2 = { level: res.level };
       }
@@ -86,5 +86,5 @@ export function mota(router: Router) {
         "rows": data,
         "msg": "保存成功",
       };
-    })
+    });
 }

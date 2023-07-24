@@ -10,7 +10,6 @@ import {
   update,
 } from "../mongoDB/index.ts";
 import { Document, ObjectId } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
-
 import { verifyToken } from "../verifyToken/index.ts";
 
 export function wzry(router: Router): void {

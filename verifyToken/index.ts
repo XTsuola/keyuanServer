@@ -4,7 +4,6 @@ import { Document } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
 import { queryAll } from "../mongoDB/index.ts";
 
 export async function verifyToken(ctx: any, next: any): Promise<void> {
-
   const headers: Headers = await ctx.request.headers;
   const token: string | null = headers.get("token");
   let shicha: number = 0;
@@ -14,7 +13,9 @@ export async function verifyToken(ctx: any, next: any): Promise<void> {
       const payload = await decode(token)[1] as any;
       if (payload) {
         const data: Document[] = await queryAll({}, "token");
-        const obj: Document | undefined = data.find((item: Document): boolean => item.account == payload.account);
+        const obj: Document | undefined = data.find((item: Document): boolean =>
+          item.account == payload.account
+        );
         if (obj && obj.token == token) {
           flag = true;
         } else {

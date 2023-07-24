@@ -11,7 +11,6 @@ import {
 } from "../mongoDB/index.ts";
 import { Document, ObjectId } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
 import { decode } from "https://deno.land/std@0.138.0/encoding/base64.ts";
-
 import { verifyToken } from "../verifyToken/index.ts";
 
 export function yuanshen(router: Router): void {
