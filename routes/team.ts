@@ -26,12 +26,7 @@ export function team(router: Router): void {
       };
     }).get("/getMemberList", verifyToken, async (ctx): Promise<void> => { // 获取成员列表
       const params: any = helpers.getQuery(ctx);
-      let sql: any = {};
-      if (params.group === undefined || params.group === "") {
-        sql = {};
-      } else {
-        sql = { "group": params.group };
-      }
+      let sql: any = { "group": params.group };
       const total: number = await queryCount(sql, "member");
       const data: Document[] = await queryAll(sql, "member");
       ctx.response.body = {

@@ -17,26 +17,17 @@ export function yuanshen(router: Router): void {
   router
     .get("/yuanshen/getHeroList", verifyToken, async (ctx): Promise<void> => { // 获取英雄列表
       const params: any = helpers.getQuery(ctx);
-      let sql: any = {
-        name: { "$regex": params.name },
-        remark: params.starSign
-          ? { "$regex": params.starSign }
-          : { "$regex": "" },
-      };
-      if (params.gender != undefined && parseInt(params.gender) != 0) {
-        sql = { ...sql, gender: parseInt(params.gender) };
-      }
-      if (params.country != undefined && parseInt(params.country) != 0) {
-        sql = { ...sql, country: parseInt(params.country) };
-      }
-      if (params.arms != undefined && parseInt(params.arms) != 0) {
-        sql = { ...sql, arms: parseInt(params.arms) };
-      }
-      if (params.shuxing != undefined && parseInt(params.shuxing) != 0) {
-        sql = { ...sql, shuxing: parseInt(params.shuxing) };
-      }
-      if (params.star != undefined && parseInt(params.star) != 0) {
-        sql = { ...sql, star: parseInt(params.star) };
+      let sql: any = {};
+      for (let key in params) {
+        if (key == "name") {
+          sql = { ...sql, [key]: { "$regex": params[key] } };
+        } else if (key == "starSign") {
+          sql = { ...sql, remark: { "$regex": params[key] } };
+        } else {
+          if (parseInt(params[key])) {
+            sql = { ...sql, [key]: parseInt(params[key]) };
+          }
+        }
       }
       const total: number = await queryCount(sql, "yuanshenHero");
       const data: Document[] = await queryAll(
@@ -170,18 +161,16 @@ export function yuanshen(router: Router): void {
       verifyToken,
       async (ctx): Promise<void> => { // 获取武器列表
         const params: any = helpers.getQuery(ctx);
-        let sql: any = { name: { "$regex": params.name } };
-        if (params.type != undefined && parseInt(params.type) != 0) {
-          sql = { ...sql, "type": parseInt(params.type) };
+        let sql: any = {};
+        for (let key in params) {
+          if (key == "name" || key == "baseAttack" || key == "attribute") {
+            sql = { ...sql, [key]: { "$regex": params[key] } };
+          } else {
+            if (parseInt(params[key])) {
+              sql = { ...sql, [key]: parseInt(params[key]) };
+            }
+          }
         }
-        if (params.star != undefined && parseInt(params.star) != 0) {
-          sql = { ...sql, "star": parseInt(params.star) };
-        }
-        sql = {
-          ...sql,
-          baseAttack: { "$regex": params.baseAttack },
-          attribute: { "$regex": params.attribute },
-        };
         const total: number = await queryCount(sql, "yuanshenWeapon");
         const data: Document[] = await queryAll(
           sql,
@@ -260,11 +249,16 @@ export function yuanshen(router: Router): void {
       verifyToken,
       async (ctx): Promise<void> => { // 获取圣遗物列表
         const params: any = helpers.getQuery(ctx);
-        let sql: any = { name: { "$regex": params.name } };
-        if (params.star != undefined && parseInt(params.star) != 0) {
-          sql = { ...sql, "star": parseInt(params.star) };
+        let sql: any = {};
+        for (let key in params) {
+          if (key == "name" || key == "tag") {
+            sql = { ...sql, [key]: { "$regex": params[key] } };
+          } else {
+            if (parseInt(params[key])) {
+              sql = { ...sql, [key]: parseInt(params[key]) };
+            }
+          }
         }
-        sql = { ...sql, tag: { "$regex": params.tag } };
         const total: number = await queryCount(sql, "yuanshenRelics");
         const data: Document[] = await queryAll(
           sql,
@@ -337,24 +331,106 @@ export function yuanshen(router: Router): void {
         "msg": "删除成功",
       };
     }).get(
+      "/yuanshen/getEnemyList",
+      verifyToken,
+      async (ctx): Promise<void> => { // 获取怪物列表
+        const params: any = helpers.getQuery(ctx);
+        let sql: any = {};
+        for (let key in params) {
+          if (key == "name") {
+            sql = { ...sql, [key]: { "$regex": params[key] } };
+          } else {
+            if (parseInt(params[key])) {
+              sql = { ...sql, [key]: parseInt(params[key]) };
+            }
+          }
+        }
+        const total: number = await queryCount(sql, "yuanshenEnemy");
+        const data: Document[] = await queryAll(
+          sql,
+          "yuanshenEnemy",
+          parseInt(params.pageSize),
+          parseInt(params.pageNo),
+        );
+        ctx.response.body = {
+          "code": 200,
+          "rows": data,
+          "total": total,
+          "msg": "查询成功",
+        };
+      },
+    ).post("/yuanshen/addEnemy", verifyToken, async (ctx): Promise<void> => { // 新增怪物信息
+      const params: any = await ctx.request.body({
+        type: "json",
+      }).value;
+      const lastInfo: Document[] = await findLast("yuanshenEnemy");
+      let id: number = 0;
+      if (lastInfo.length) {
+        id = lastInfo[0].id;
+      }
+      const sql = {
+        id: id + 1,
+        name: params.name,
+        enemyType: params.enemyType,
+        info: params.info,
+        remark: params.remark,
+      };
+      const data = await add(sql, "yuanshenEnemy");
+      ctx.response.body = {
+        "code": 200,
+        "rows": data,
+        "msg": "新增成功",
+      };
+    }).post(
+      "/yuanshen/updateEnemy",
+      verifyToken,
+      async (ctx): Promise<void> => { // 修改怪物信息
+        const params: any = await ctx.request.body({
+          type: "json",
+        }).value;
+        const param1 = { _id: new ObjectId(params._id) };
+        const param2 = {
+          id: params.id,
+          name: params.name,
+          enemyType: params.enemyType,
+          info: params.info,
+          remark: params.remark,
+        };
+        const data = await update(param1, param2, "yuanshenEnemy");
+        ctx.response.body = {
+          "code": 200,
+          "rows": data,
+          "msg": "修改成功",
+        };
+      },
+    ).get(
+      "/yuanshen/deleteEnemy",
+      verifyToken,
+      async (ctx): Promise<void> => { // 删除怪物信息
+        const params: any = helpers.getQuery(ctx);
+        const sql = { _id: new ObjectId(params._id) };
+        const data: number = await deleteData(sql, "yuanshenEnemy");
+        ctx.response.body = {
+          "code": 200,
+          "rows": data,
+          "msg": "删除成功",
+        };
+      },
+    ).get(
       "/yuanshen/getAbyss12List",
       verifyToken,
       async (ctx): Promise<void> => { // 获取深渊12层怪物列表
         const params: any = helpers.getQuery(ctx);
-        let sql = {};
-        if (params.name) {
-          console.log(params.name);
-          sql = {
-            $or: [
-              { firstUpper: { "$regex": params.name } },
-              { firstLower: { "$regex": params.name } },
-              { secondUpper: { "$regex": params.name } },
-              { secondLower: { "$regex": params.name } },
-              { thirdUpper: { "$regex": params.name } },
-              { thirdLower: { "$regex": params.name } },
-            ],
-          };
-        }
+        const sql = {
+          $or: [
+            { firstUpper: { "$regex": params.name } },
+            { firstLower: { "$regex": params.name } },
+            { secondUpper: { "$regex": params.name } },
+            { secondLower: { "$regex": params.name } },
+            { thirdUpper: { "$regex": params.name } },
+            { thirdLower: { "$regex": params.name } },
+          ],
+        };
         const total: number = await queryCount(sql, "yuanshenAbyss12");
         const data: Document[] = await queryAll(
           sql,

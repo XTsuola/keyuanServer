@@ -69,16 +69,15 @@ export function myLove(router: Router): void {
     }).get("/myLove/getCookList", verifyToken, async (ctx): Promise<void> => { // 获取菜谱列表
       const params: any = helpers.getQuery(ctx);
       let sql: any = {};
-      if (params.cookType != undefined && parseInt(params.cookType) != 0) {
-        sql = { ...sql, cookType: parseInt(params.cookType) };
+      for (let key in params) {
+        if (key == "name") {
+          sql = { ...sql, [key]: { "$regex": params[key] } };
+        } else {
+          if (parseInt(params[key])) {
+            sql = { ...sql, [key]: parseInt(params[key]) };
+          }
+        }
       }
-      if (params.hunsu != undefined && parseInt(params.hunsu) != 0) {
-        sql = { ...sql, hunsu: parseInt(params.hunsu) };
-      }
-      if (params.mastery != undefined && parseInt(params.mastery) != 0) {
-        sql = { ...sql, mastery: parseInt(params.mastery) };
-      }
-      sql = { ...sql, name: { "$regex": params.name } };
       const total: number = await queryCount(sql, "cook");
       const data: Document[] = await queryAll(
         sql,

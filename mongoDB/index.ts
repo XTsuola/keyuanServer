@@ -4,26 +4,34 @@ import {
   MongoClient,
 } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
 
+function deletePage(obj: any) {
+  delete obj.pageSize
+  delete obj.pageNo
+  return obj
+}
+
 const client = new MongoClient();
 await client.connect("mongodb://127.0.0.1:27017");
 const db = client.database("keyuan");
 
 // 查询总数
 export async function queryCount(
-  data: any,
+  params: any,
   tableName: string,
 ): Promise<number> {
+  let data = deletePage(params);
   const result = await db.collection(tableName).count(data);
   return result;
 }
 
 // 查询所有
 export async function queryAll(
-  data: any,
+  params: any,
   tableName: string,
   pageSize?: number,
   pageNo?: number,
 ): Promise<Document[]> {
+  let data = deletePage(params);
   if (pageSize && pageNo) {
     const result: Document[] = await db.collection(tableName).find(data).limit(
       pageSize,

@@ -16,12 +16,15 @@ export function yys(router: Router): void {
   router
     .get("/yys/getHeroList", verifyToken, async (ctx): Promise<void> => { // 获取式神列表
       const params: any = helpers.getQuery(ctx);
-      let sql: any = { name: { "$regex": params.name } };
-      if (params.gender != undefined && parseInt(params.gender) != 0) {
-        sql = { ...sql, gender: parseInt(params.gender) };
-      }
-      if (params.star != undefined && parseInt(params.star) != 0) {
-        sql = { ...sql, star: parseInt(params.star) };
+      let sql: any = {};
+      for (let key in params) {
+        if (key == "name") {
+          sql = { ...sql, [key]: { "$regex": params[key] } };
+        } else {
+          if (parseInt(params[key])) {
+            sql = { ...sql, [key]: parseInt(params[key]) };
+          }
+        }
       }
       const total: number = await queryCount(sql, "yinyangshiHero");
       const data: Document[] = await queryAll(

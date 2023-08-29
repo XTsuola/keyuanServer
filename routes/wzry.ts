@@ -17,17 +17,15 @@ export function wzry(router: Router): void {
     .get("/wzry/getHeroList", verifyToken, async (ctx): Promise<void> => { // 获取英雄列表
       const params: any = helpers.getQuery(ctx);
       let sql = {};
-      if (params.gender != undefined && parseInt(params.gender) != 0) {
-        sql = { ...sql, gender: parseInt(params.gender) };
+      for (let key in params) {
+        if (key == "name" || key == "skin") {
+          sql = { ...sql, [key]: { "$regex": params[key] } };
+        } else {
+          if (parseInt(params[key])) {
+            sql = { ...sql, [key]: parseInt(params[key]) };
+          }
+        }
       }
-      if (params.position != undefined && parseInt(params.position) != 0) {
-        sql = { ...sql, position: parseInt(params.position) };
-      }
-      sql = {
-        ...sql,
-        name: { "$regex": params.name },
-        skin: { "$regex": params.skin },
-      };
       const total: number = await queryCount(sql, "wzryHero");
       const data: Document[] = await queryAll(
         sql,
