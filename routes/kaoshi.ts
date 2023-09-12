@@ -342,6 +342,29 @@ export function kaoshi(router: Router): void {
         "rows": data,
         "msg": "新增成功",
       };
+    }).post("/resetReport", verifyToken, async (ctx): Promise<void> => { // 重置答卷
+      const params: any = await ctx.request.body({
+        type: "json",
+      }).value;
+      const sql = { id: params.paperId };
+      const obj: Document | undefined = await queryOne(sql, "paper");
+      const arr: any[] = [];
+      obj?.stemArr.length;
+      for (let i: number = 0; i <= obj?.stemArr.length - 1; i++) {
+        arr.push("");
+      }
+      const params1 = { _id: new ObjectId(params.reportId) };
+      const params2 = {
+        flag: true,
+        score: "",
+        answerArr: arr,
+      };
+      const data: any = await update(params1, params2, "report");
+      ctx.response.body = {
+        "code": 200,
+        "rows": data,
+        "msg": "重置成功",
+      };
     }).get("/getMyPaperlist", verifyToken, async (ctx): Promise<void> => { // 查询当前用户的试卷
       const params: any = helpers.getQuery(ctx);
       const sql1 = { id: parseInt(params.id) };

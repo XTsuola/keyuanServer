@@ -18,7 +18,7 @@ export function mhmnz(router: Router): void {
       const params: any = helpers.getQuery(ctx);
       let sql: any = {};
       for (let key in params) {
-        if (key == "name" || key == "superSkill" || key == "arms") {
+        if (key == "name" || key == "skillGroup" || key == "arms") {
           sql = { ...sql, [key]: { "$regex": params[key] } };
         } else {
           if (parseInt(params[key])) {
@@ -57,6 +57,7 @@ export function mhmnz(router: Router): void {
         exclusive: params.exclusive,
         arms: params.arms,
         superSkill: params.superSkill,
+        skillGroup: params.skillGroup,
         castGrainSkill: params.castGrainSkill,
         talent: params.talent,
         introduce: params.introduce,
@@ -81,6 +82,7 @@ export function mhmnz(router: Router): void {
         exclusive: params.exclusive,
         arms: params.arms,
         superSkill: params.superSkill,
+        skillGroup: params.skillGroup,
         castGrainSkill: params.castGrainSkill,
         talent: params.talent,
         introduce: params.introduce,
