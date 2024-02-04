@@ -85,6 +85,8 @@ export function yuanshen(router: Router): void {
         lifeSeat: params.lifeSeat,
         star: params.star,
         introduce: params.introduce,
+        firstLook: params.firstLook,
+        birthday: params.birthday,
         remark: params.remark,
         img: img,
       };
@@ -133,6 +135,8 @@ export function yuanshen(router: Router): void {
         lifeSeat: params.lifeSeat,
         star: params.star,
         introduce: params.introduce,
+        firstLook: params.firstLook,
+        birthday: params.birthday,
         remark: params.remark,
         img: img,
       };
