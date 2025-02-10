@@ -36,7 +36,7 @@ export function kaoshi(router: Router): void {
         stem: params.stem,
         type: params.type,
         selectArr: params.selectArr,
-        anwser: params.anwser,
+        answer: params.answer,
         url: params.url,
         remark: params.remark,
       };
@@ -55,7 +55,7 @@ export function kaoshi(router: Router): void {
         stem: params.stem,
         type: params.type,
         selectArr: params.selectArr,
-        anwser: params.anwser,
+        answer: params.answer,
         url: params.url,
         remark: params.remark,
       };
@@ -153,21 +153,9 @@ export function kaoshi(router: Router): void {
       };
     }).get("/deletePaper", verifyToken, async (ctx): Promise<void> => { // 删除试卷
       const params = helpers.getQuery(ctx);
-      const list: Document[] = await queryAll({}, "report");
-      const arr: any[] = [];
-      for (let i: number = 0; i <= list.length - 1; i++) {
-        arr.push(list[i].paperId);
-      }
-      let count: number = 0;
-      for (let i: number = 0; i <= arr.length - 1; i++) {
-        if (arr[i] == parseInt(params.id)) {
-          count++;
-        }
-        if (count > 0) {
-          break;
-        }
-      }
-      if (count > 0) {
+      const sql = { paperId: parseInt(params.id) }
+      const list: Document[] = await queryAll(sql, "report");
+      if (list.length > 0) {
         ctx.response.body = {
           "code": 500,
           "msg": "该试卷已被用户绑定",
@@ -330,7 +318,7 @@ export function kaoshi(router: Router): void {
         paperId: params.paperId,
         userId: params.userId,
         paperName: obj?.paperName,
-        anwserArr: arr,
+        answerArr: arr,
         score: "",
         allScore: obj?.score,
         time: obj?.time,
@@ -438,21 +426,23 @@ export function kaoshi(router: Router): void {
       }).value;
       const stemArr: any = JSON.parse(params.dataArr);
       let score: number = 0;
-      const anwserList: any[] = [];
+      const answerList: any[] = [];
+      const scoreList: any[] = [];
       for (let i: number = 0; i <= stemArr.length - 1; i++) {
         const sql1 = { id: stemArr[i].id };
         const res1: Document | undefined = await queryOne(sql1, "question");
-        if (stemArr[i].anwser == res1?.anwser) {
+        let nowScore = 0;
+        if (stemArr[i].answer == res1?.answer) {
           const sql2 = { id: params.paperId };
           const res2: Document | undefined = await queryOne(sql2, "paper");
           const index = res2?.stemArr.findIndex((item: any) => {
             return item.key == stemArr[i].id;
           });
-          score += parseFloat(res2?.stemArr[index].score);
+          nowScore = parseFloat(res2?.stemArr[index].score)
         } else {
           if (stemArr[i].type == 5) {
-            const ans: number = parseFloat(stemArr[i].anwser);
-            const list: any = JSON.parse(res1?.anwser);
+            const ans: number = parseFloat(stemArr[i].answer);
+            const list: any = JSON.parse(res1?.answer);
             let xs: number = 0;
             if (ans > list[0]) {
               xs = 0;
@@ -472,17 +462,21 @@ export function kaoshi(router: Router): void {
             const index: any = res2?.stemArr.findIndex((item: any): boolean => {
               return item.key == stemArr[i].id;
             });
-            score += parseFloat(res2?.stemArr[index].score) * xs;
+            nowScore = parseFloat(res2?.stemArr[index].score) * xs
+              ;
           }
         }
-        anwserList.push(stemArr[i].anwser);
+        scoreList.push(nowScore)
+        score += nowScore
+        answerList.push(stemArr[i].answer);
       }
       const param1 = {
         userId: params.userId,
         paperId: params.paperId,
       };
       const param2 = {
-        anwserArr: anwserList,
+        answerArr: answerList,
+        scoreArr: scoreList,
         score: score.toString(),
         flag: false,
       };
@@ -507,11 +501,13 @@ export function kaoshi(router: Router): void {
         arr.push({
           index: i,
           stemName: res3?.stem,
-          rightAnwser: res3?.anwser,
+          rightAnswer: res3?.answer,
           remark: res3?.remark,
           type: res3?.type,
-          selectArr: res3?.selectArr,
-          myAnwser: res1?.anwserArr[i],
+          selectArr: res3?.selectArr[i],
+          score: parseFloat(res2?.stemArr[i].score),
+          myScore: res1?.scoreArr[i],
+          myAnswer: res1?.answerArr[i],
         });
       }
       ctx.response.body = {
