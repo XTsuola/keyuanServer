@@ -18,7 +18,7 @@ export function mhmnz(router: Router): void {
       const params: any = helpers.getQuery(ctx);
       let sql: any = {};
       for (let key in params) {
-        if (key == "name" || key == "skillGroup" || key == "arms") {
+        if (key == "name" || key == "skillGroup" || key == "arms" || key == "skin") {
           sql = { ...sql, [key]: { "$regex": params[key] } };
         } else {
           if (parseInt(params[key])) {
@@ -60,6 +60,7 @@ export function mhmnz(router: Router): void {
         skillGroup: params.skillGroup,
         castGrainSkill: params.castGrainSkill,
         talent: params.talent,
+        skin: params.skin,
         introduce: params.introduce,
       };
       const data: any = await add(sql, "mhmnzHero");
@@ -85,6 +86,7 @@ export function mhmnz(router: Router): void {
         skillGroup: params.skillGroup,
         castGrainSkill: params.castGrainSkill,
         talent: params.talent,
+        skin: params.skin,
         introduce: params.introduce,
       };
       const data = await update(param1, param2, "mhmnzHero");
@@ -145,6 +147,7 @@ export function mhmnz(router: Router): void {
         def: params.def,
         mof: params.mof,
         talent: params.talent,
+        skin: params.skin,
         remark: params.remark,
       };
       const data: any = await add(sql, "mhmnzArms");
@@ -167,6 +170,7 @@ export function mhmnz(router: Router): void {
         def: params.def,
         mof: params.mof,
         talent: params.talent,
+        skin: params.skin,
         remark: params.remark,
       };
       const data = await update(param1, param2, "mhmnzArms");
