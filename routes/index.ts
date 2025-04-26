@@ -6,23 +6,30 @@ import { wzry } from "./wzry.ts";
 import { mhmnz } from "./mhmnz.ts";
 import { yuanshen } from "./yuanshen.ts";
 import { yys } from "./yys.ts";
-import { hywz } from "./hywz.ts"
+import { hywz } from "./hywz.ts";
 import { xingta } from "./xingta.ts";
 import { myLove } from "./myLove.ts";
 import { mota } from "./mota.ts";
+import { chess } from "./chess.ts";
 
 const router = new Router();
+const list = [
+    login,
+    team,
+    kaoshi,
+    wzry,
+    mhmnz,
+    yuanshen,
+    yys,
+    hywz,
+    xingta,
+    mota,
+    chess,
+    myLove,
+];
 
-login(router);
-team(router);
-kaoshi(router);
-wzry(router);
-mhmnz(router);
-yuanshen(router);
-yys(router);
-hywz(router);
-xingta(router);
-myLove(router);
-mota(router);
+for(let i=0;i<list.length;i++) {
+    list[i](router);
+}
 
 export default router;

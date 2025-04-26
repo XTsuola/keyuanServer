@@ -25,6 +25,16 @@ export async function queryCount(
 }
 
 // 查询所有
+export async function queryAll2(
+  params: any,
+  tableName: string,
+): Promise<Document[]> {
+  const result: Document[] = await db.collection(tableName).find(params).sort({life:-1})
+    .toArray();
+  return result;
+}
+
+// 查询所有
 export async function queryAll(
   params: any,
   tableName: string,

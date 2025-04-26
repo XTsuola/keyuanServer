@@ -9,6 +9,7 @@ import {
   queryCount,
   queryOne,
   update,
+  queryAll2,
 } from "../mongoDB/index.ts";
 import { Document, ObjectId } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
 import { decode } from "https://deno.land/std@0.138.0/encoding/base64.ts";
@@ -209,5 +210,13 @@ export function team(router: Router): void {
         "rows": data,
         "msg": "新增成功",
       };
-    });
+    }).get("/testMongo", verifyToken, async (ctx): Promise<void> => { // 测试mongoDB
+      const sql = {"life": {$gt :"45"}};
+      const data: any = await queryAll2(sql, "mhmnzArms");
+      ctx.response.body = {
+        "code": 200,
+        "rows": data,
+        "msg": "查询成功",
+      };
+    })
 }
