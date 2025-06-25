@@ -23,7 +23,7 @@ export function myLove(router: Router): void {
         "rows": data,
         "msg": "查询成功",
       };
-    }).post("/myLove/addPhoto", verifyToken, async (ctx): Promise<void> => { // 获取照片列表
+    }).post("/myLove/addPhoto", verifyToken, async (ctx): Promise<void> => { // 新增照片
       const params: any = await ctx.request.body({
         type: "json",
       }).value;
@@ -33,7 +33,7 @@ export function myLove(router: Router): void {
         id = lastInfo[0].id;
       }
       try {
-        const imgName: string = `id_${Date.now()}.${params.imgType}`;
+        const imgName: string = `id_${new Date(params.createTime)}.${params.imgType}`;
         const path = `${Deno.cwd()}/public/photoImg/${imgName}`;
         const base64: any = params.url.replace(/^data:image\/\w+;base64,/, "");
         const dataBuffer: Uint8Array = decode(base64);
@@ -54,7 +54,7 @@ export function myLove(router: Router): void {
       } catch (error) {
         throw (error);
       }
-    }).get("/myLove/deletePhoto", verifyToken, async (ctx): Promise<void> => { // 删除菜谱
+    }).delete("/myLove/deletePhoto", verifyToken, async (ctx): Promise<void> => { // 删除照片
       const params: any = helpers.getQuery(ctx);
       if (params.url) {
         Deno.remove(`${Deno.cwd()}/public/photoImg/${params.url}`);

@@ -12,13 +12,14 @@ export function chess(router: Router): void {
       // 象棋当前所有状态
       const data: any = await queryOne({ id: 1 }, "chess");
       const res = {
+        id: 1,
         map: data.map,
         status: data.status,
         nowPlay: data.nowPlay,
       };
       ctx.response.body = {
         code: 200,
-        data: res,
+        rows: res,
         msg: "查询成功",
       };
     })
@@ -34,7 +35,7 @@ export function chess(router: Router): void {
         [1, 0, 1, 0, 1, 0, 1, 0, 1],
         [0, 2, 0, 0, 0, 0, 0, 2, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [3, 4, 5, 6, 7, 6, 5, 4, 3],
+        [3, 4, 5, 6, 7, 6, 5, 4, 3]
       ];
       const params = {
         map: defaultMap,
@@ -56,12 +57,9 @@ export function chess(router: Router): void {
       let status = 1;
       const obj: any = await queryOne({ id: 1 }, "chess");
 
-      if (obj.map[params.index1][params.index2] == 17) {
-        status = 2;
-      } else if (obj.map[params.index1][params.index2] == 7) {
+      if (obj.map[params.index1][params.index2] == 17 || obj.map[params.index1][params.index2] == 7) {
         status = 2;
       }
-
       let indexOne: number = Math.floor(params.nowIndex / 10);
       let indexTwo: number = params.nowIndex % 10;
       obj.map[params.index1][params.index2] = params.qizi;

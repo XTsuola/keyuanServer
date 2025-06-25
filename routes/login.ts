@@ -50,7 +50,7 @@ export function login(router: Router) {
           }
           ctx.response.body = {
             "code": 200,
-            "data": data2,
+            "rows": data2,
             "msg": "登录成功",
           };
         } else {
