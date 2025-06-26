@@ -36,8 +36,11 @@ export function kaoshi(router: Router): void {
         stem: params.stem,
         type: params.type,
         selectArr: params.selectArr,
+        a: params.a,
+        b: params.b,
+        c: params.c,
+        d: params.d,
         answer: params.answer,
-        url: params.url,
         remark: params.remark,
       };
       const data: any = await add(sql, "question");
@@ -207,6 +210,8 @@ export function kaoshi(router: Router): void {
         account: params.account,
         password: params.password,
         age: params.age,
+        img: "",
+        paperList: [],
         level: params.level,
         remark: params.remark,
       };
@@ -235,13 +240,18 @@ export function kaoshi(router: Router): void {
         "rows": data,
         "msg": "修改成功",
       };
-    }).post("/deleteUser", verifyToken, async (ctx): Promise<void> => { // 删除用户
+    }).delete("/deleteUser", verifyToken, async (ctx): Promise<void> => { // 删除用户
       const params: any = await ctx.request.body({
         type: "json",
       }).value;
       if (params.level != 1) {
-        const sql = { _id: new ObjectId(params._id) };
-        const data: number = await deleteData(sql, "user");
+        const sql = { "id": JSON.parse(params.id) };
+        const data: Document | undefined = await queryOne(sql, "user");
+        if(data && data.img != "") {
+          await Deno.remove(`${Deno.cwd()}/public/headImg/${data.img}`);
+        }
+        const sql2 = { id: parseInt(params.id) };
+        const data2: number = await deleteData(sql, "user");
         ctx.response.body = {
           "code": 200,
           "rows": data,

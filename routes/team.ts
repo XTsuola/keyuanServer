@@ -35,8 +35,6 @@ export function team(router: Router): void {
       const params: any = await ctx.request.body({
         type: "json",
       }).value;
-      const sql = { "id": params.id };
-      const res: Document | undefined = await queryOne(sql, "user");
       try {
         const imgName: string = params.id + "_" + Date.now() + ".jpg";
         const path = `${Deno.cwd()}/public/headImg/${imgName}`;
