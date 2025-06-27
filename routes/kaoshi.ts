@@ -68,7 +68,7 @@ export function kaoshi(router: Router): void {
         "rows": data,
         "msg": "修改成功",
       };
-    }).get("/deleteQuestion", verifyToken, async (ctx): Promise<void> => { // 删除试题
+    }).delete("/deleteQuestion", verifyToken, async (ctx): Promise<void> => { // 删除试题
       const params: any = helpers.getQuery(ctx);
       const list: Document[] = await queryAll({}, "paper");
       const arr: any[] = [];
@@ -97,7 +97,7 @@ export function kaoshi(router: Router): void {
           "msg": "该试题已被试卷绑定",
         };
       } else {
-        const sql = { _id: new ObjectId(params._id) };
+        const sql = { id: JSON.parse(params.id) };
         const data: number = await deleteData(sql, "question");
         ctx.response.body = {
           "code": 200,
@@ -154,7 +154,7 @@ export function kaoshi(router: Router): void {
         "rows": data,
         "msg": "修改成功",
       };
-    }).get("/deletePaper", verifyToken, async (ctx): Promise<void> => { // 删除试卷
+    }).delete("/deletePaper", verifyToken, async (ctx): Promise<void> => { // 删除试卷
       const params = helpers.getQuery(ctx);
       const sql = { paperId: parseInt(params.id) }
       const list: Document[] = await queryAll(sql, "report");
@@ -164,7 +164,7 @@ export function kaoshi(router: Router): void {
           "msg": "该试卷已被用户绑定",
         };
       } else {
-        const sql = { _id: new ObjectId(params._id) };
+        const sql = { id: parseInt(params.id) };
         const data: number = await deleteData(sql, "paper");
         ctx.response.body = {
           "code": 200,
@@ -172,21 +172,28 @@ export function kaoshi(router: Router): void {
           "msg": "删除成功",
         };
       }
-    }).post("/getStemArrList", verifyToken, async (ctx): Promise<void> => { // 获取试卷对应试题
-      const params: any = await ctx.request.body({
-        type: "json",
-      }).value;
+    }).get("/getStemArrList", verifyToken, async (ctx): Promise<void> => { // 获取试卷对应试题
+      const params = helpers.getQuery(ctx);
       const dataList: any[] = [];
-      for (let i: number = 0; i <= params.length - 1; i++) {
-        const sql = { id: params[i] };
-        const res: Document | undefined = await queryOne(sql, "question");
-        dataList.push(res);
+      const res: Document | undefined = await queryOne({ id: JSON.parse(params.paperId) }, "paper");
+      if (res) {
+        const list = res.stemArr
+        for (let i: number = 0; i < list.length; i++) {
+          const sql = { id: list[i].key };
+          const res: Document | undefined = await queryOne(sql, "question");
+          const data: any = {};
+          data.id = res?.id;
+          data.stem = res?.stem;
+          data.type = res?.type;
+          data.score = list[i].score
+          dataList.push(data);
+        }
+        ctx.response.body = {
+          "code": 200,
+          "rows": dataList,
+          "msg": "查询成功",
+        };
       }
-      ctx.response.body = {
-        "code": 200,
-        "rows": dataList,
-        "msg": "查询成功",
-      };
     }).get("/getUserList", verifyToken, async (ctx): Promise<void> => { // 获取用户列表
       const sql = {};
       const data: Document[] = await queryAll(sql, "user");
@@ -247,7 +254,7 @@ export function kaoshi(router: Router): void {
       if (params.level != 1) {
         const sql = { "id": JSON.parse(params.id) };
         const data: Document | undefined = await queryOne(sql, "user");
-        if(data && data.img != "") {
+        if (data && data.img != "") {
           await Deno.remove(`${Deno.cwd()}/public/headImg/${data.img}`);
         }
         const sql2 = { id: parseInt(params.id) };
@@ -332,7 +339,7 @@ export function kaoshi(router: Router): void {
         score: "",
         allScore: obj?.score,
         time: obj?.time,
-        flag: true,
+        flag: 0,
       };
       const data: any = await add(sql3, "report");
       ctx.response.body = {
@@ -353,7 +360,7 @@ export function kaoshi(router: Router): void {
       }
       const params1 = { _id: new ObjectId(params.reportId) };
       const params2 = {
-        flag: true,
+        flag: 0,
         score: "",
         answerArr: arr,
       };
@@ -488,7 +495,7 @@ export function kaoshi(router: Router): void {
         answerArr: answerList,
         scoreArr: scoreList,
         score: score.toString(),
-        flag: false,
+        flag: 1,
       };
       const res3 = await update(param1, param2, "report");
       ctx.response.body = {
