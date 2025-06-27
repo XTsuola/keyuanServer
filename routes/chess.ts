@@ -8,8 +8,7 @@ import { verifyToken } from "../verifyToken/index.ts";
 
 export function chess(router: Router): void {
   router
-    .get("/chess/getMap", verifyToken, async (ctx): Promise<void> => {
-      // 象棋当前所有状态
+    .get("/chess/getMap", verifyToken, async (ctx): Promise<void> => { // 象棋当前所有状态
       const data: any = await queryOne({ id: 1 }, "chess");
       const res = {
         id: 1,
@@ -23,8 +22,7 @@ export function chess(router: Router): void {
         msg: "查询成功",
       };
     })
-    .get("/chess/reset", verifyToken, async (ctx): Promise<void> => {
-      // 重置棋盘
+    .get("/chess/reset", verifyToken, async (ctx): Promise<void> => { // 重置棋盘
       let defaultMap = [
         [13, 14, 15, 16, 17, 16, 15, 14, 13],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -49,8 +47,7 @@ export function chess(router: Router): void {
         msg: "重置成功",
       };
     })
-    .post("/chess/update", verifyToken, async (ctx): Promise<void> => {
-      // 更新棋盘
+    .post("/chess/update", verifyToken, async (ctx): Promise<void> => { // 更新棋盘
       const params: any = await ctx.request.body({
         type: "json",
       }).value;

@@ -257,8 +257,7 @@ export function kaoshi(router: Router): void {
         if (data && data.img != "") {
           await Deno.remove(`${Deno.cwd()}/public/headImg/${data.img}`);
         }
-        const sql2 = { id: parseInt(params.id) };
-        const data2: number = await deleteData(sql, "user");
+        await deleteData(sql, "user");
         ctx.response.body = {
           "code": 200,
           "rows": data,
@@ -430,7 +429,7 @@ export function kaoshi(router: Router): void {
       const param1 = { id: params.userId };
       const param2 = { paperList: res?.paperList };
       await update(param1, param2, "user");
-      const sql3 = { _id: new ObjectId(params._id) };
+      const sql3 = { id: JSON.parse(params.id) };
       const data: number = await deleteData(sql3, "report");
       ctx.response.body = {
         "code": 200,
