@@ -335,10 +335,12 @@ export function kaoshi(router: Router): void {
       }
       const sql2 = { id: params.paperId };
       const obj: Document | undefined = await queryOne(sql2, "paper");
-      const arr: any[] = [];
+      const arr: string[] = [];
+      const brr: number[] = [];
       obj?.stemArr.length;
       for (let i: number = 0; i <= obj?.stemArr.length - 1; i++) {
         arr.push("");
+        brr.push(0);
       }
       const sql3 = {
         id: index + 1,
@@ -346,6 +348,7 @@ export function kaoshi(router: Router): void {
         userId: params.userId,
         paperName: obj?.paperName,
         answerArr: arr,
+        scoreArr: brr,
         score: "",
         allScore: obj?.score,
         time: obj?.time,
@@ -363,16 +366,19 @@ export function kaoshi(router: Router): void {
       }).value;
       const sql = { id: params.paperId };
       const obj: Document | undefined = await queryOne(sql, "paper");
-      const arr: any[] = [];
+      const arr: string[] = [];
+      const brr: number[] = [];
       obj?.stemArr.length;
       for (let i: number = 0; i <= obj?.stemArr.length - 1; i++) {
         arr.push("");
+        brr.push(0);
       }
       const params1 = { _id: new ObjectId(params.reportId) };
       const params2 = {
         flag: 0,
         score: "",
         answerArr: arr,
+        scoreArr: brr
       };
       const data: any = await update(params1, params2, "report");
       ctx.response.body = {
@@ -417,6 +423,7 @@ export function kaoshi(router: Router): void {
             d: res2?.d,
             stem: res2?.stem,
             type: res2?.type,
+            score: res1.stemArr[i].score
           });
         }
       }
@@ -501,7 +508,7 @@ export function kaoshi(router: Router): void {
       const param2 = {
         answerArr: answerList,
         scoreArr: scoreList,
-        score: score.toString(),
+        score: score,
         flag: 1,
       };
       const res3 = await update(param1, param2, "report");
