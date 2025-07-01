@@ -78,9 +78,9 @@ export function xingta(router: Router): void {
         "rows": data,
         "msg": "修改成功",
       };
-    }).get("/xingta/deleteHero", verifyToken, async (ctx): Promise<void> => { // 删除英雄信息
+    }).delete("/xingta/deleteHero", verifyToken, async (ctx): Promise<void> => { // 删除英雄信息
       const params: any = helpers.getQuery(ctx);
-      const sql = { _id: new ObjectId(params._id) };
+      const sql = { id: JSON.parse(params.id) };
       const data: number = await deleteData(sql, "xingtaHero");
       ctx.response.body = {
         "code": 200,
