@@ -60,9 +60,8 @@ export function xingta(router: Router): void {
       const params: any = await ctx.request.body({
         type: "json",
       }).value;
-      const param1 = { _id: new ObjectId(params._id) };
+      const param1 = { id: JSON.parse(params.id) };
       const param2 = {
-        id: params.id,
         name: params.name,
         title: params.title,
         mainShuxing: params.mainShuxing,
