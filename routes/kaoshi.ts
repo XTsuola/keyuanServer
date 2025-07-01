@@ -360,23 +360,20 @@ export function kaoshi(router: Router): void {
         "rows": data,
         "msg": "新增成功",
       };
-    }).post("/resetReport", verifyToken, async (ctx): Promise<void> => { // 重置答卷
-      const params: any = await ctx.request.body({
-        type: "json",
-      }).value;
-      const sql = { id: params.paperId };
-      const obj: Document | undefined = await queryOne(sql, "paper");
+    }).get("/resetReport", verifyToken, async (ctx): Promise<void> => { // 重置答卷
+      const params = helpers.getQuery(ctx);
+      const sql = { id: JSON.parse(params.id) };
+      const obj: Document | undefined = await queryOne(sql, "report");
       const arr: string[] = [];
       const brr: number[] = [];
-      obj?.stemArr.length;
-      for (let i: number = 0; i <= obj?.stemArr.length - 1; i++) {
+      for (let i: number = 0; i < obj?.answerArr.length; i++) {
         arr.push("");
         brr.push(0);
       }
-      const params1 = { _id: new ObjectId(params.reportId) };
+      const params1 = { id: JSON.parse(params.id) };
       const params2 = {
         flag: 0,
-        score: "",
+        score: 0,
         answerArr: arr,
         scoreArr: brr
       };
@@ -386,7 +383,7 @@ export function kaoshi(router: Router): void {
         "rows": data,
         "msg": "重置成功",
       };
-    }).get("/getMyPaperList", verifyToken, async (ctx): Promise<void> => { // 查询当前用户的试卷
+    }).get("/getMyPaperList", verifyToken, async (ctx): Promise<void> => { // 查询用户答卷列表
       const params: any = helpers.getQuery(ctx);
       const sql = { userId: parseInt(params.id) };
       const data: Document[] = await queryAll(sql, "report");
@@ -394,6 +391,7 @@ export function kaoshi(router: Router): void {
         "code": 200,
         "rows": data.map((item: Document) => {
           return {
+            id: item.id,
             flag: item.flag,
             paperId: item.paperId,
             paperName: item.paperName,
@@ -405,7 +403,7 @@ export function kaoshi(router: Router): void {
         }),
         "msg": "查询成功",
       };
-    }).get("/getNowPaper", verifyToken, async (ctx): Promise<void> => { // 查询当前用户的试卷
+    }).get("/getNowPaper", verifyToken, async (ctx): Promise<void> => { // 查询当前用户的答卷
       const params: any = helpers.getQuery(ctx);
       const sql1 = { id: parseInt(params.id) };
       const res1: Document | undefined = await queryOne(sql1, "paper");
@@ -517,26 +515,26 @@ export function kaoshi(router: Router): void {
         "rows": res3,
         "msg": "查询成功",
       };
-    }).post("/getResult", verifyToken, async (ctx): Promise<void> => { // 查看试卷结果
-      const params: any = await ctx.request.body({
-        type: "json",
-      }).value;
-      const sql1 = { userId: params.userId, paperId: params.paperId };
+    }).get("/getResult", verifyToken, async (ctx): Promise<void> => { // 查看试卷结果
+      const params = helpers.getQuery(ctx);
+      const sql1 = { id: JSON.parse(params.id) };
       const res1: Document | undefined = await queryOne(sql1, "report");
-      const sql2 = { id: res1?.paperId };
+      const sql2 = { id: JSON.parse(res1?.paperId) };
       const res2: Document | undefined = await queryOne(sql2, "paper");
       const arr: any[] = [];
       for (let i: number = 0; i < res2?.stemArr.length; i++) {
         const sql3 = { id: res2?.stemArr[i].key };
         const res3: Document | undefined = await queryOne(sql3, "question");
         arr.push({
-          index: i,
           stemName: res3?.stem,
           rightAnswer: res3?.answer,
           remark: res3?.remark,
           type: res3?.type,
-          selectArr: res3?.selectArr[i],
-          score: parseFloat(res2?.stemArr[i].score),
+          a: res3?.a,
+          b: res3?.b,
+          c: res3?.c,
+          d: res3?.d,
+          score: res2?.stemArr[i].score,
           myScore: res1?.scoreArr[i],
           myAnswer: res1?.answerArr[i],
         });
