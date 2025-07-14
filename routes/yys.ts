@@ -95,9 +95,9 @@ export function yys(router: Router): void {
         "rows": data,
         "msg": "修改成功",
       };
-    }).get("/yys/deleteHero", verifyToken, async (ctx): Promise<void> => { // 删除式神信息
+    }).delete("/yys/deleteHero", verifyToken, async (ctx): Promise<void> => { // 删除式神信息
       const params: any = helpers.getQuery(ctx);
-      const sql = { _id: new ObjectId(params._id) };
+      const sql = { id: JSON.parse(params.id) };
       const data: number = await deleteData(sql, "yinyangshiHero");
       ctx.response.body = {
         "code": 200,

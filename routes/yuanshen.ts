@@ -392,7 +392,7 @@ export function yuanshen(router: Router): void {
         const params: any = await ctx.request.body({
           type: "json",
         }).value;
-        const param1 = { _id: new ObjectId(params._id) };
+        const param1 = { id: JSON.parse(params.id) };
         const param2 = {
           id: params.id,
           name: params.name,
@@ -407,12 +407,12 @@ export function yuanshen(router: Router): void {
           "msg": "修改成功",
         };
       },
-    ).get(
+    ).delete(
       "/yuanshen/deleteEnemy",
       verifyToken,
       async (ctx): Promise<void> => { // 删除怪物信息
         const params: any = helpers.getQuery(ctx);
-        const sql = { _id: new ObjectId(params._id) };
+        const sql = { id: JSON.parse(params.id) };
         const data: number = await deleteData(sql, "yuanshenEnemy");
         ctx.response.body = {
           "code": 200,
@@ -482,7 +482,7 @@ export function yuanshen(router: Router): void {
         const params: any = await ctx.request.body({
           type: "json",
         }).value;
-        const param1 = { _id: new ObjectId(params._id) };
+        const param1 = { id: JSON.parse(params.id) };
         const param2 = {
           id: params.id,
           version: params.version,
@@ -501,12 +501,12 @@ export function yuanshen(router: Router): void {
           "msg": "修改成功",
         };
       },
-    ).get(
+    ).delete(
       "/yuanshen/deleteAbyss12",
       verifyToken,
       async (ctx): Promise<void> => { // 删除深渊12层怪物信息
         const params: any = helpers.getQuery(ctx);
-        const sql = { _id: new ObjectId(params._id) };
+        const sql = { id: JSON.parse(params.id) };
         const data: number = await deleteData(sql, "yuanshenAbyss12");
         ctx.response.body = {
           "code": 200,

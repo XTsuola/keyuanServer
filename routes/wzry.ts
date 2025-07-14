@@ -9,7 +9,7 @@ import {
   queryCount,
   update,
 } from "../mongoDB/index.ts";
-import { Document, ObjectId } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
+import { Document } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
 import { verifyToken } from "../verifyToken/index.ts";
 
 export function wzry(router: Router): void {
@@ -66,7 +66,7 @@ export function wzry(router: Router): void {
       const params: any = await ctx.request.body({
         type: "json",
       }).value;
-      const param1 = { _id: new ObjectId(params._id) };
+      const param1 = { id: parseInt(params.id) };
       const param2 = {
         id: params.id,
         name: params.name,
@@ -81,9 +81,9 @@ export function wzry(router: Router): void {
         "rows": data,
         "msg": "修改成功",
       };
-    }).get("/wzry/deleteHero", verifyToken, async (ctx): Promise<void> => { // 删除英雄信息
+    }).delete("/wzry/deleteHero", verifyToken, async (ctx): Promise<void> => { // 删除英雄信息
       const params: any = helpers.getQuery(ctx);
-      const sql = { _id: new ObjectId(params._id) };
+      const sql = { id: JSON.parse(params.id) };
       const data: number = await deleteData(sql, "wzryHero");
       ctx.response.body = {
         "code": 200,

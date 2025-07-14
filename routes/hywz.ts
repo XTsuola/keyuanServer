@@ -9,7 +9,7 @@ import {
   queryCount,
   update,
 } from "../mongoDB/index.ts";
-import { Document, ObjectId } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
+import { Document } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
 import { verifyToken } from "../verifyToken/index.ts";
 
 export function hywz(router: Router): void {
@@ -74,7 +74,7 @@ export function hywz(router: Router): void {
       const params: any = await ctx.request.body({
         type: "json",
       }).value;
-      const param1 = { _id: new ObjectId(params._id) };
+      const param1 = { id: parseInt(params.id) };
       const param2 = {
         id: params.id,
         name: params.name,
@@ -97,9 +97,9 @@ export function hywz(router: Router): void {
         "rows": data,
         "msg": "修改成功",
       };
-    }).get("/hywz/deleteArms", verifyToken, async (ctx): Promise<void> => { // 删除兵种信息
+    }).delete("/hywz/deleteArms", verifyToken, async (ctx): Promise<void> => { // 删除兵种信息
       const params: any = helpers.getQuery(ctx);
-      const sql = { _id: new ObjectId(params._id) };
+      const sql = { id: parseInt(params.id) };
       const data: number = await deleteData(sql, "hywzArms");
       ctx.response.body = {
         "code": 200,

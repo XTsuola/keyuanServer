@@ -9,9 +9,8 @@ import {
   queryCount,
   queryOne,
   update,
-  queryAll2,
 } from "../mongoDB/index.ts";
-import { Document, ObjectId } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
+import { Document } from "https://deno.land/x/mongo@v0.29.3/mod.ts";
 import { decode } from "https://deno.land/std@0.138.0/encoding/base64.ts";
 import { verifyToken } from "../verifyToken/index.ts";
 
@@ -160,11 +159,14 @@ export function team(router: Router): void {
         "msg": "删除成功",
       };
     }).get("/getWrcList", verifyToken, async (ctx): Promise<void> => { // 获取锦集列表
+      const params: any = helpers.getQuery(ctx);
       const sql = {};
-      const data: Document[] = await queryAll(sql, "wrc");
+      const total: number = await queryCount(sql, "wrc");
+      const data: Document[] = await queryAll(sql, "wrc", parseInt(params.pageSize), parseInt(params.pageNo),);
       ctx.response.body = {
         "code": 200,
         "rows": data,
+        "total": total,
         "msg": "查询成功",
       };
     }).post("/addWrc", verifyToken, async (ctx): Promise<void> => {
@@ -192,7 +194,7 @@ export function team(router: Router): void {
       };
     }).delete("/deleteWrc", verifyToken, async (ctx): Promise<void> => { // 删除锦集
       const params: any = helpers.getQuery(ctx);
-      const sql = { _id: new ObjectId(params._id) };
+      const sql = { id: JSON.parse(params.id) };
       const data: number = await deleteData(sql, "wrc");
       ctx.response.body = {
         "code": 200,
