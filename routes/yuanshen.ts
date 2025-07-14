@@ -6,6 +6,7 @@ import {
   deleteData,
   findLast,
   queryAll,
+  queryOne,
   queryCount,
   update,
 } from "../mongoDB/index.ts";
@@ -55,7 +56,7 @@ export function yuanshen(router: Router): void {
       const baseName: string = params.name + ".jpg";
       try {
         await Deno.remove(`${Deno.cwd()}/public/yuanshen/hero/${baseName}`);
-      } catch (_) {}
+      } catch (_) { }
       if (params.img) {
         if (params.img != baseName) {
           const imgName: string = params.name + ".jpg";
@@ -101,26 +102,28 @@ export function yuanshen(router: Router): void {
         type: "json",
       }).value;
       let img = "";
-      const baseName: string = params.name + ".jpg";
-      if (params.img) {
-        if (params.img != baseName) {
-          try {
-            await Deno.remove(`${Deno.cwd()}/public/yuanshen/hero/${baseName}`);
-          } catch (_) {}
-          const imgName: string = params.name + ".jpg";
-          const path = `${Deno.cwd()}/public/yuanshen/hero/${imgName}`;
-          const base64: any = params.img.replace(
-            /^data:image\/\w+;base64,/,
-            "",
-          );
-          const dataBuffer: Uint8Array = decode(base64);
-          await Deno.writeFile(path, dataBuffer);
-          img = baseName;
-        } else {
-          img = baseName;
-        }
+      const data1: any = await queryOne({ id: JSON.parse(params.id) }, "yuanshenHero");
+      if (data1.img == params.img) {
+        const imgName: string = params.name + ".jpg";
+        const oldPath = `${Deno.cwd()}/public/yuanshen/hero/${data1.img}`;
+        const newPath = `${Deno.cwd()}/public/yuanshen/hero/${imgName}`;
+        await Deno.rename(oldPath, newPath);
+        img = imgName;
+      } else {
+        try {
+          await Deno.remove(`${Deno.cwd()}/public/yuanshen/hero/${params.img}`);
+        } catch (_) { }
+        const imgName: string = params.name + ".jpg";
+        const path = `${Deno.cwd()}/public/yuanshen/hero/${imgName}`;
+        const base64: any = params.img.replace(
+          /^data:image\/\w+;base64,/,
+          "",
+        );
+        const dataBuffer: Uint8Array = decode(base64);
+        await Deno.writeFile(path, dataBuffer);
+        img = imgName;
       }
-      const param1 = { _id: new ObjectId(params._id) };
+      const param1 = { id: JSON.parse(params.id) };
       const param2 = {
         id: params.id,
         name: params.name,
@@ -146,18 +149,19 @@ export function yuanshen(router: Router): void {
         "rows": data,
         "msg": "修改成功",
       };
-    }).get("/yuanshen/deleteHero", verifyToken, async (ctx): Promise<void> => { // 删除英雄信息
+    }).delete("/yuanshen/deleteHero", verifyToken, async (ctx): Promise<void> => { // 删除英雄信息
       const params: any = helpers.getQuery(ctx);
-      if (params.img) {
+      const data1: any = await queryOne({ id: JSON.parse(params.id) }, "yuanshenHero");
+      if (data1.img) {
         try {
-          await Deno.remove(`${Deno.cwd()}/public/yuanshen/hero/${params.img}`);
-        } catch (_) {}
+          await Deno.remove(`${Deno.cwd()}/public/yuanshen/hero/${data1.img}`);
+        } catch (_) { }
       }
-      const sql = { _id: new ObjectId(params._id) };
-      const data: number = await deleteData(sql, "yuanshenHero");
+      const sql = { id: JSON.parse(params.id) };
+      const data2: number = await deleteData(sql, "yuanshenHero");
       ctx.response.body = {
         "code": 200,
-        "rows": data,
+        "rows": data2,
         "msg": "删除成功",
       };
     }).get(
@@ -221,7 +225,7 @@ export function yuanshen(router: Router): void {
         const params: any = await ctx.request.body({
           type: "json",
         }).value;
-        const param1 = { _id: new ObjectId(params._id) };
+        const param1 = { id: JSON.parse(params.id) };
         const param2 = {
           id: params.id,
           name: params.name,
@@ -239,9 +243,9 @@ export function yuanshen(router: Router): void {
           "msg": "修改成功",
         };
       },
-    ).get("/yuanshen/deleteWeapon", verifyToken, async (ctx): Promise<void> => { // 删除武器信息
+    ).delete("/yuanshen/deleteWeapon", verifyToken, async (ctx): Promise<void> => { // 删除武器信息
       const params: any = helpers.getQuery(ctx);
-      const sql = { _id: new ObjectId(params._id) };
+      const sql = { id: JSON.parse(params.id) };
       const data: number = await deleteData(sql, "yuanshenWeapon");
       ctx.response.body = {
         "code": 200,
@@ -308,7 +312,7 @@ export function yuanshen(router: Router): void {
         const params: any = await ctx.request.body({
           type: "json",
         }).value;
-        const param1 = { _id: new ObjectId(params._id) };
+        const param1 = { id: JSON.parse(params.id) };
         const param2 = {
           id: params.id,
           name: params.name,
@@ -325,9 +329,9 @@ export function yuanshen(router: Router): void {
           "msg": "修改成功",
         };
       },
-    ).get("/yuanshen/deleteRelics", verifyToken, async (ctx): Promise<void> => { // 删除圣遗物信息
+    ).delete("/yuanshen/deleteRelics", verifyToken, async (ctx): Promise<void> => { // 删除圣遗物信息
       const params: any = helpers.getQuery(ctx);
-      const sql = { _id: new ObjectId(params._id) };
+      const sql = { id: JSON.parse(params.id) };
       const data: number = await deleteData(sql, "yuanshenRelics");
       ctx.response.body = {
         "code": 200,
