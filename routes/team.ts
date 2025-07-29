@@ -23,7 +23,7 @@ export function team(router: Router): void {
         sql = { "groupName": params.groupName };
       }
       const total: number = await queryCount(sql, "member");
-      const data: Document[] = await queryAll(sql, "member");
+      const data: Document[] = await queryAll(sql, "member", parseInt(params.pageSize), parseInt(params.pageNo));
       ctx.response.body = {
         "code": 200,
         "rows": data,
@@ -51,9 +51,7 @@ export function team(router: Router): void {
           "rows": data,
           "msg": "修改成功",
         };
-      } catch (error) {
-        throw (error);
-      }
+      } catch (_) { }
     }).get("/getUserInfo", verifyToken, async (ctx): Promise<void> => { // 用户信息查询
       const params: any = helpers.getQuery(ctx);
       const sql = { "id": JSON.parse(params.id) };
@@ -160,17 +158,16 @@ export function team(router: Router): void {
       };
     }).get("/getWrcList", verifyToken, async (ctx): Promise<void> => { // 获取锦集列表
       const params: any = helpers.getQuery(ctx);
-      const sql = {};
-      const total: number = await queryCount(sql, "wrc");
-      const data: Document[] = await queryAll(sql, "wrc", parseInt(params.pageSize), parseInt(params.pageNo),);
+      const total: number = await queryCount({}, "wrc");
+      const data: Document[] = await queryAll({}, "wrc", parseInt(params.pageSize), parseInt(params.pageNo),);
       ctx.response.body = {
         "code": 200,
         "rows": data,
         "total": total,
         "msg": "查询成功",
       };
-    }).post("/addWrc", verifyToken, async (ctx): Promise<void> => {
-      const params: any = await ctx.request.body({ // 新增锦集
+    }).post("/addWrc", verifyToken, async (ctx): Promise<void> => {  // 新增锦集
+      const params: any = await ctx.request.body({
         type: "json",
       }).value;
       const lastInfo: Document[] = await findLast("wrc");

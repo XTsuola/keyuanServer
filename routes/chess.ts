@@ -53,7 +53,6 @@ export function chess(router: Router): void {
       }).value;
       let status = 1;
       const obj: any = await queryOne({ id: 1 }, "chess");
-
       if (obj.map[params.index1][params.index2] == 17 || obj.map[params.index1][params.index2] == 7) {
         status = 2;
       }
@@ -61,7 +60,6 @@ export function chess(router: Router): void {
       let indexTwo: number = params.nowIndex % 10;
       obj.map[params.index1][params.index2] = params.qizi;
       obj.map[indexOne][indexTwo] = 0;
-
       const data = {
         map: obj.map,
         status: status,

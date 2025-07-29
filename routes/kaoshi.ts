@@ -6,6 +6,7 @@ import {
   deleteData,
   findLast,
   queryAll,
+  queryCount,
   queryOne,
   update,
 } from "../mongoDB/index.ts";
@@ -15,11 +16,13 @@ import { verifyToken } from "../verifyToken/index.ts";
 export function kaoshi(router: Router): void {
   router
     .get("/getQuestionList", verifyToken, async (ctx): Promise<void> => { // 获取题库列表
-      const sql = {};
-      const data: Document[] = await queryAll(sql, "question");
+      const params: any = helpers.getQuery(ctx);
+      const total: number = await queryCount({}, "question");
+      const data: Document[] = await queryAll({}, "question", parseInt(params.pageSize), parseInt(params.pageNo));
       ctx.response.body = {
         "code": 200,
         "rows": data,
+        "total": total,
         "msg": "查询成功",
       };
     }).post("/addQuestion", verifyToken, async (ctx): Promise<void> => { // 新增试题

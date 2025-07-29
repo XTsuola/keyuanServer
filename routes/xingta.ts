@@ -16,14 +16,8 @@ export function xingta(router: Router): void {
   router
     .get("/xingta/getHeroList", verifyToken, async (ctx): Promise<void> => { // 获取英雄列表
       const params: any = helpers.getQuery(ctx);
-      const sql = {};
-      const total: number = await queryCount(sql, "xingtaHero");
-      const data: Document[] = await queryAll(
-        sql,
-        "xingtaHero",
-        parseInt(params.pageSize),
-        parseInt(params.pageNo),
-      );
+      const total: number = await queryCount({}, "xingtaHero");
+      const data: Document[] = await queryAll({}, "xingtaHero", parseInt(params.pageSize), parseInt(params.pageNo));
       ctx.response.body = {
         "code": 200,
         "rows": data,
