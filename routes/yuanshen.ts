@@ -53,23 +53,25 @@ export function yuanshen(router: Router): void {
         id = lastInfo[0].id;
       }
       let img = "";
-      const baseName: string = params.name + ".jpg";
-      try {
-        await Deno.remove(`${Deno.cwd()}/public/yuanshen/hero/${baseName}`);
-      } catch (_) { }
       if (params.img) {
-        if (params.img != baseName) {
-          const imgName: string = params.name + ".jpg";
-          const path = `${Deno.cwd()}/public/yuanshen/hero/${imgName}`;
-          const base64: any = params.img.replace(
-            /^data:image\/\w+;base64,/,
-            "",
-          );
-          const dataBuffer: Uint8Array = decode(base64);
-          await Deno.writeFile(path, dataBuffer);
-          img = baseName;
-        } else {
-          img = baseName;
+        const baseName: string = params.name + ".jpg";
+        try {
+          await Deno.remove(`${Deno.cwd()}/public/yuanshen/hero/${baseName}`);
+        } catch (_) { }
+        if (params.img) {
+          if (params.img != baseName) {
+            const imgName: string = params.name + ".jpg";
+            const path = `${Deno.cwd()}/public/yuanshenImg/hero/${imgName}`;
+            const base64: any = params.img.replace(
+              /^data:image\/\w+;base64,/,
+              "",
+            );
+            const dataBuffer: Uint8Array = decode(base64);
+            await Deno.writeFile(path, dataBuffer);
+            img = baseName;
+          } else {
+            img = baseName;
+          }
         }
       }
       const sql = {
