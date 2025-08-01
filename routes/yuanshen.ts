@@ -427,7 +427,7 @@ export function yuanshen(router: Router): void {
         };
       },
     ).get(
-      "/yuanshen/getAbyss12List",
+      "/yuanshen/getAbyssList",
       verifyToken,
       async (ctx): Promise<void> => { // 获取深渊12层怪物列表
         const params: any = helpers.getQuery(ctx);
@@ -441,10 +441,10 @@ export function yuanshen(router: Router): void {
             { thirdLower: { "$regex": params.name } },
           ],
         };
-        const total: number = await queryCount(sql, "yuanshenAbyss12");
+        const total: number = await queryCount(sql, "yuanshenAbyss");
         const data: Document[] = await queryAll(
           sql,
-          "yuanshenAbyss12",
+          "yuanshenAbyss",
           parseInt(params.pageSize),
           parseInt(params.pageNo),
         );
@@ -455,11 +455,11 @@ export function yuanshen(router: Router): void {
           "msg": "查询成功",
         };
       },
-    ).post("/yuanshen/addAbyss12", verifyToken, async (ctx): Promise<void> => { // 新增深渊12层怪物信息
+    ).post("/yuanshen/addAbyss", verifyToken, async (ctx): Promise<void> => { // 新增深渊12层怪物信息
       const params: any = await ctx.request.body({
         type: "json",
       }).value;
-      const lastInfo: Document[] = await findLast("yuanshenAbyss12");
+      const lastInfo: Document[] = await findLast("yuanshenAbyss");
       let id: number = 0;
       if (lastInfo.length) {
         id = lastInfo[0].id;
@@ -475,14 +475,14 @@ export function yuanshen(router: Router): void {
         thirdLower: params.thirdLower,
         remark: params.remark,
       };
-      const data = await add(sql, "yuanshenAbyss12");
+      const data = await add(sql, "yuanshenAbyss");
       ctx.response.body = {
         "code": 200,
         "rows": data,
         "msg": "新增成功",
       };
     }).post(
-      "/yuanshen/updateAbyss12",
+      "/yuanshen/updateAbyss",
       verifyToken,
       async (ctx): Promise<void> => { // 修改深渊12层怪物信息
         const params: any = await ctx.request.body({
@@ -500,7 +500,7 @@ export function yuanshen(router: Router): void {
           thirdLower: params.thirdLower,
           remark: params.remark,
         };
-        const data = await update(param1, param2, "yuanshenAbyss12");
+        const data = await update(param1, param2, "yuanshenAbyss");
         ctx.response.body = {
           "code": 200,
           "rows": data,
@@ -508,12 +508,12 @@ export function yuanshen(router: Router): void {
         };
       },
     ).delete(
-      "/yuanshen/deleteAbyss12",
+      "/yuanshen/deleteAbyss",
       verifyToken,
       async (ctx): Promise<void> => { // 删除深渊12层怪物信息
         const params: any = helpers.getQuery(ctx);
         const sql = { id: JSON.parse(params.id) };
-        const data: number = await deleteData(sql, "yuanshenAbyss12");
+        const data: number = await deleteData(sql, "yuanshenAbyss");
         ctx.response.body = {
           "code": 200,
           "rows": data,
