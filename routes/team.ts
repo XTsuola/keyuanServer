@@ -39,9 +39,11 @@ export function team(router: Router): void {
         const path = `${Deno.cwd()}/public/headImg/${imgName}`;
         const base64: any = params.img.replace(/^data:image\/\w+;base64,/, "");
         const dataBuffer: Uint8Array = decode(base64);
-        if (params.oldImg) {
-          await Deno.remove(`${Deno.cwd()}/public/headImg/${params.oldImg}`);
-        }
+        try {
+          if (params.oldImg) {
+            await Deno.remove(`${Deno.cwd()}/public/headImg/${params.oldImg}`);
+          }
+        } catch (_) { }
         await Deno.writeFile(path, dataBuffer);
         const param1 = { id: params.id };
         const param2 = { img: imgName };
