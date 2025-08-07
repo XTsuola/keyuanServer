@@ -103,27 +103,27 @@ export function yuanshen(router: Router): void {
       const params: any = await ctx.request.body({
         type: "json",
       }).value;
-      let img = "";
       const data1: any = await queryOne({ id: JSON.parse(params.id) }, "yuanshenHero");
-      if (data1.img == params.img) {
-        const imgName: string = params.name + ".jpg";
-        const oldPath = `${Deno.cwd()}/public/yuanshen/hero/${data1.img}`;
-        const newPath = `${Deno.cwd()}/public/yuanshen/hero/${imgName}`;
-        await Deno.rename(oldPath, newPath);
-        img = imgName;
-      } else {
-        try {
-          await Deno.remove(`${Deno.cwd()}/public/yuanshen/hero/${params.img}`);
-        } catch (_) { }
-        const imgName: string = params.name + ".jpg";
-        const path = `${Deno.cwd()}/public/yuanshen/hero/${imgName}`;
-        const base64: any = params.img.replace(
-          /^data:image\/\w+;base64,/,
-          "",
-        );
-        const dataBuffer: Uint8Array = decode(base64);
-        await Deno.writeFile(path, dataBuffer);
-        img = imgName;
+      if (data1.img != params.img) {
+        if (data1.img != "") {
+          try {
+            const path = `${Deno.cwd()}/public/yuanshenImg/hero/${data1.img}`;
+            await Deno.remove(path);
+          } catch (_) { }
+        }
+        if (params.img != "") {
+          const imgName: string = params.name + ".jpg";
+          const path = `${Deno.cwd()}/public/yuanshenImg/hero/${imgName}`;
+          const base64: any = params.img.replace(
+            /^data:image\/\w+;base64,/,
+            "",
+          );
+          const dataBuffer: Uint8Array = decode(base64);
+          try {
+            await Deno.writeFile(path, dataBuffer);
+          } catch (_) { }
+          data1.img = imgName;
+        }
       }
       const param1 = { id: JSON.parse(params.id) };
       const param2 = {
@@ -143,7 +143,7 @@ export function yuanshen(router: Router): void {
         firstLook: params.firstLook,
         birthday: params.birthday,
         remark: params.remark,
-        img: img,
+        img: data1.img,
       };
       const data = await update(param1, param2, "yuanshenHero");
       ctx.response.body = {
